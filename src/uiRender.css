@@ -1,0 +1,159 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Grid Rows */
+.grid-row {
+    display: grid !important;
+    gap: 1.5rem !important;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.row-uneven {
+    grid-template-columns: 2fr 1fr !important;
+}
+
+/* Stats Row (Special handling if needed, but we'll use grid-row) */
+.stats-row {
+    display: grid !important;
+    gap: 1.5rem !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+}
+
+/* Panel */
+.panel {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e1e4e8;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    background: #f8f9fa;
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid #e1e4e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333333;
+    margin: 0;
+}
+
+.panel-body {
+    padding: 1rem;
+    flex: 1;
+}
+
+.subsidiary-panel-body {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.panel-item-list {
+    list-style: none;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.panel-item-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid #eff2f5;
+
+    flex: 1;          /* 컬럼 높이 자동 지정 */
+    min-height: 0;    /* flex 버그 방지 */
+}
+
+.panel-item-icon {
+    width: 32px;
+    height: 32px;
+    background: #f1f3f5;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #004b8d;
+}
+
+.panel-item-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.panel-item-subText {
+    color: #666666;
+    font-size: 0.75rem;
+}
+
+.panel-item-content {
+    flex: 1;
+}
+
+
+.panel-item-icon.success svg {
+    color: #22863a;
+}
+
+.panel-item-icon.fail svg {
+    color: #d73a49;
+}
+
+.panel-item-icon.partial svg {
+    color: #ffcc33
+}
+
+/* Status Badge */
+
+.status-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 1.00rem;
+    font-weight: 600;
+}
+
+.status-badge.success {
+    background: #e6ffed;
+    color: #22863a;
+}
+
+.status-badge.fail, .status-badge.fatal {
+    background: #ffeef0;
+    color: #d73a49;
+}
+
+.status-badge.partial, .status-badge.warning {
+    background: #fff5b1; /* 연한 노랑 */
+    color: #735c0f; /* 진한 노랑/갈색 */
+}
+
+.status-badge.critical {
+    background: #fff1e6; /* 연한 주황 */
+    color: #c24e00;      /* 진한 주황 */
+}
+
+/* Panel - IP  */
+.ip-masked {
+    font-size: 0.8rem;
+    color: #666666;
+    font-family: 'Courier New', Courier, monospace;
+    /* Monospace for alignment */
+    letter-spacing: 0.5px;
+}

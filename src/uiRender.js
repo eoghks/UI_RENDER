@@ -11,12 +11,17 @@ class UiRender {
      */
     constructor(options = {}) {
         const defaults = {
+            autoCss: true,
             panel: {
                 size: 5,
                 events: []
             },
         };
         this.options = this.deepMerge(defaults, options);
+
+        if (this.options.autoCss) {
+            this.injectCss();
+        }
     }
 
     /**
@@ -35,6 +40,24 @@ class UiRender {
             }
         }
         return result;
+    }
+
+    injectCss() {
+        if (document.getElementById("ui-render-style")) return;
+
+        const link = document.createElement("link");
+        link.id = "ui-render-style";
+        link.rel = "stylesheet";
+
+        const script = document.currentScript ||
+            [...document.scripts].find(s => s.src.includes("uiRender"));
+
+        if (script) {
+            const base = script.src.substring(0, script.src.lastIndexOf("/") + 1);
+            link.href = base + "uiRender.css";
+        }
+
+        document.head.appendChild(link);
     }
 
     /**
