@@ -1,3 +1,5 @@
+import * as utils from './utils.js';
+
 /**
  * UiRender - Panel 컴포넌트 렌더러 (JSP/브라우저 환경)
  */
@@ -14,7 +16,8 @@ class UiRender {
             autoCss: true,
             panel: {
                 size: 5,
-                events: []
+                events: [],
+                emptyText: "데이터 없음"
             },
         };
         this.options = this.deepMerge(defaults, options);
@@ -124,7 +127,7 @@ class UiRender {
         if (custom.body) {
             custom.body(panelEl, viewData);
         } else {
-            this.renderDefaultBody(panelEl, panelClassId, viewData);
+            this.renderDefaultBody(panelEl, panelClassId, viewData, panelOptions);
         }
 
         // Footer
@@ -157,30 +160,37 @@ class UiRender {
         panel.appendChild(div);
     }
 
-    renderDefaultBody(panel, panelClassId, viewData) {
+    renderDefaultBody(panel, panelClassId, viewData, panelOptions) {
         const body = document.createElement("div");
         body.className = `panel-body ${panelClassId}-body`;
 
         const ul = document.createElement("ul");
         ul.className = `panel-item-list ${panelClassId}-list`;
 
-        viewData.forEach((item, index) => {
-            const li = document.createElement("li");
-            li.className = `panel-item ${panelClassId}-item`;
-            li.dataset.index = index;
+        if (!utils.isEmpty(viewData)) {
+            viewData.forEach((item, index) => {
+                const li = document.createElement("li");
+                li.className = `panel-item ${panelClassId}-item`;
+                li.dataset.index = index;
 
-            if (item.icon) {
-                li.appendChild(this.createIcon(item.icon));
-            }
-            if (item.title) {
-                li.appendChild(this.createContent(item));
-            }
-            if (item.rightType) {
-                li.appendChild(this.createRightComponent(item));
-            }
+                if (item.icon) {
+                    li.appendChild(this.createIcon(item.icon));
+                }
+                if (item.title) {
+                    li.appendChild(this.createContent(item));
+                }
+                if (item.rightType) {
+                    li.appendChild(this.createRightComponent(item));
+                }
 
-            ul.appendChild(li);
-        });
+                ul.appendChild(li);
+            });
+        } else {
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = `panel-item ${panelClassId}-item panel-empty`;
+            emptyDiv.textContent = panelOptions.emptyText; // 원하는 문구로 변경 가능
+            ul.appendChild(emptyDiv);
+        }
 
         body.appendChild(ul);
         panel.appendChild(body);
@@ -239,18 +249,17 @@ class UiRender {
         return span;
     }
 
-    // TODO:dhwi MVP
     bindEvents(panel, events, viewData) {
-        events.forEach(evt => {
-            panel.addEventListener(evt.type, e => {
-                const target = evt.selector ? e.target.closest(evt.selector) : panel;
+        events.forEach(event => {
+            panel.addEventListener(event.type, e => {
+                const target = event.selector ? e.target.closest(event.selector) : panel;
                 if (!target) return;
 
                 const itemEl = target.closest(".panel-item");
                 const index = Number(itemEl?.dataset.index);
                 const itemData = !isNaN(index) ? viewData[index] : null;
 
-                evt.handler({event: e, element: target, item: itemData, index: !isNaN(index) ? index : null});
+                event.handler({event: e, element: target, item: itemData, index: !isNaN(index) ? index : null});
             });
         });
     }
