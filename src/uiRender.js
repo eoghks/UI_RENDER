@@ -19,6 +19,7 @@ class UiRender {
         };
         this.options = this.deepMerge(defaults, options);
 
+        // CSS 자동 주입
         if (this.options.autoCss) {
             this.injectCss();
         }
@@ -42,6 +43,23 @@ class UiRender {
         return result;
     }
 
+    /**
+     * UI Render CSS를 문서에 삽입합니다.
+     *
+     * <p>
+     * 문서에 ID가 "ui-render-style"인 <code>link</code> 요소가 이미 존재하면
+     * 아무 작업도 수행하지 않습니다. 존재하지 않으면 새로운 <code>link</code> 요소를 생성하고,
+     * 현재 실행 중인 스크립트(src에 "uiRender" 포함)와 같은 디렉토리에 있는
+     * "uiRender.css" 파일을 참조하도록 설정합니다.
+     * </p>
+     *
+     * <p>
+     * 사용 예시:
+     * <pre>
+     *     injectCss();
+     * </pre>
+     * </p>
+     */
     injectCss() {
         if (document.getElementById("ui-render-style")) return;
 
