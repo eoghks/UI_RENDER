@@ -15,10 +15,8 @@ class UiRender {
                 size: 5,
                 events: []
             },
-            icons: []
         };
         this.options = this.deepMerge(defaults, options);
-        this.initIconScript();
     }
 
     /**
@@ -37,38 +35,6 @@ class UiRender {
             }
         }
         return result;
-    }
-
-    /**
-     * 아이콘 라이브러리 초기화 (비동기)
-     * @returns {Promise<void>}
-     */
-    initIconScript() {
-
-        // 사용자 커스텀 아이콘
-        for (const icon of this.options.icons) {
-            if (icon.script && typeof icon.callback === "function") {
-                this.loadScript(icon.script);
-            }
-        }
-
-        // Lucide 기본
-        if (!window.Lucide) {
-            this.loadScript(
-                "https://unpkg.com/lucide@latest"
-            );
-        }
-    }
-
-    /**
-     * 스크립트 동적 로드 Promise 버전
-     * @param {string} url
-     * @returns {Promise<void>}
-     */
-    loadScript(url) {
-        const script = document.createElement("script");
-        script.src = url;
-        document.head.appendChild(script);
     }
 
     /**
@@ -100,7 +66,7 @@ class UiRender {
         if (!panelEl) throw new Error(`No panel element with id ${panelId}`);
 
         const panelClassId = panelId.replace(/[^a-zA-Z0-9_-]/g, "_");
-        const opt = this.deepMerge(this.options.panel, options);
+        const panelOptions = this.deepMerge(this.options.panel, options);
 
         // Header
         if (custom.header) {
@@ -111,7 +77,7 @@ class UiRender {
 
         // 데이터 전처리
         const mapper = this.createMapper(schema);
-        const viewData = data.map(mapper).slice(0, opt.size);
+        const viewData = data.map(mapper).slice(0, panelOptions.size);
 
         // Body
         if (custom.body) {
@@ -124,10 +90,22 @@ class UiRender {
         if (custom.footer) custom.footer(panelEl);
 
         // Events
-        this.bindEvents(panelEl, opt.events, viewData);
+        this.bindEvents(panelEl, panelOptions.events, viewData);
 
-        if (window.Lucide) {
-            window.Lucide.createIcons();
+        if (typeof panelOptions.afterRender === "function") {
+            // context 생성
+            const context = {
+                panelId,
+                panelEl,
+                title,
+                rawData: data,
+                viewData,
+                schema,
+                options: panelOptions,
+                ui: this
+            };
+
+            panelOptions.afterRender(context);
         }
     }
 
@@ -215,7 +193,7 @@ class UiRender {
 
     createStatus(data) {
         const span = document.createElement("span");
-        span.className = `status-badge ${data.status}`;
+        span.className = `status-badge ${data.status.toLowerCase()}`;
         span.textContent = data.status;
         return span;
     }
@@ -236,6 +214,3 @@ class UiRender {
         });
     }
 }
-
-// 브라우저 전역 노출
-window.UiRender = UiRender;
