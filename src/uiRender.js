@@ -73,13 +73,9 @@ class UiRender {
         link.id = "ui-render-style";
         link.rel = "stylesheet";
 
-        const script = document.currentScript ||
-            [...document.scripts].find(s => s.src.includes("uiRender"));
-
-        if (script) {
-            const base = script.src.substring(0, script.src.lastIndexOf("/") + 1);
-            link.href = base + "uiRender.css";
-        }
+        // ⭐ 핵심: ES Module 대응 방식
+        const base = new URL(".", import.meta.url).href;
+        link.href = base + "uiRender.css";
 
         document.head.appendChild(link);
     }
@@ -503,3 +499,5 @@ class UiRender {
         };
     }
 }
+
+export default UiRender;

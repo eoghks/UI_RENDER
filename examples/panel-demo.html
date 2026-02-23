@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>UiRender Demo</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 30px;
+            background: #ffffff;
+        }
+
+        #panel1 {
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>UiRender Panel Demo</h2>
+
+<div id="panel1" class="panel"></div>
+
+<script type="module">
+    import UiRender from "../src/uiRender.js";
+
+    const ui = new UiRender();
+
+    const data = [
+        {title: "서버 A", subText: "192.168.0.1", rightType: "status", status: "success", icon: "server"},
+        {title: "서버 B", subText: "192.168.0.2", rightType: "status", status: "fail", icon: "server"},
+        {title: "DB 서버", subText: "192.168.0.10", rightType: "ip", ip: "10.10.10.10", icon: "database"}
+    ];
+
+    const schema = {
+        title: d => d.title,
+        subText: d => d.subText,
+        icon: d => d.icon,
+        rightType: d => d.rightType,
+        status: d => d.status,
+        ip: d => d.ip
+    };
+
+    ui.renderPanel(
+        "panel1",
+        "서버 상태",
+        data,
+        schema,
+        {
+            size: 10,
+            afterRender: () => {
+                window.lucide.createIcons();
+            },
+            events: [
+                {
+                    type: "click",
+                    selector: ".ui-panel-item",
+                    handler: (e, el, data, index) => {
+                        alert(`클릭됨: ${data.title}`);
+                    }
+                }
+            ]
+        }
+    );
+</script>
+
+</body>
+</html>
