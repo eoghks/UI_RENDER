@@ -1,27 +1,3 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-/* Grid Rows */
-.grid-row {
-    display: grid !important;
-    gap: 1.5rem !important;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
-.row-uneven {
-    grid-template-columns: 2fr 1fr !important;
-}
-
-/* Stats Row (Special handling if needed, but we'll use grid-row) */
-.stats-row {
-    display: grid !important;
-    gap: 1.5rem !important;
-    grid-template-columns: repeat(6, 1fr) !important;
-}
 
 /* Panel */
 .panel {
@@ -121,35 +97,6 @@
     height: 100%;
     font-size: 1.5rem;
     color: #999;
-}
-
-/* Status Badge */
-
-.status-badge {
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 1.00rem;
-    font-weight: 600;
-}
-
-.status-badge.success {
-    background: #e6ffed;
-    color: #22863a;
-}
-
-.status-badge.fail, .status-badge.fatal {
-    background: #ffeef0;
-    color: #d73a49;
-}
-
-.status-badge.partial, .status-badge.warning {
-    background: #fff5b1; /* 연한 노랑 */
-    color: #735c0f; /* 진한 노랑/갈색 */
-}
-
-.status-badge.critical {
-    background: #fff1e6; /* 연한 주황 */
-    color: #c24e00;      /* 진한 주황 */
 }
 
 /* Panel - IP  */

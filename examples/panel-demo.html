@@ -24,7 +24,7 @@
 <div id="panel1" class="panel"></div>
 
 <script type="module">
-    import UiRender from "../src/uiRender.js";
+    import UiRender from "../src/core/uiRender.js";
 
     const ui = new UiRender();
 
@@ -43,7 +43,7 @@
         ip: d => d.ip
     };
 
-    ui.renderPanel(
+    ui.createPanel(
         "panel1",
         "서버 상태",
         data,
