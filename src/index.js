@@ -1,4 +1,4 @@
 import UiRender from "./core/UiRender.js";
-import PanelRender from "./components/panel/PanelRender.js";
+import ListView from "./components/list/listView.js";
 
-export { UiRender, PanelRender };
+export { UiRender, ListView };

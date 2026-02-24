@@ -1,6 +1,6 @@
 import * as utils from "../../utils/utils.js";
 
-class PanelRender {
+class ListView {
     constructor(options = {}) {
         this.options = utils.deepMerge({
             size: 5,
@@ -9,33 +9,33 @@ class PanelRender {
         }, options);
 
         const base = new URL(".", import.meta.url).href;
-        utils.injectCss(base + "panel.css");
+        utils.injectCss(base + "listView.css");
     }
     /**
-     * 패널 렌더링
-     * @param {string} panelId
+     * ListView 렌더링
+     * @param {string} id
      * @param {string} title
      * @param {Array<Object>} data
      * @param {Object} schema
      * @param {Object} [options]
      * @param {Object} [custom] - {header, body, footer} 커스텀 함수
      */
-    render(panelId, title, data, schema, options = {}, custom = {}) {
-        const panelEl = document.getElementById(panelId);
-        if (!panelEl) {
-            throw new Error(`No panel element with id ${panelId}`);
+    render(id, title, data, schema, options = {}, custom = {}) {
+        const listViewEl = document.getElementById(id);
+        if (!listViewEl) {
+            throw new Error(`No listView element with id ${id}`);
         }
 
-        // panelEl 초기화
-        panelEl.innerHTML = "";
+        // listViewEl 초기화
+        listViewEl.innerHTML = "";
 
-        const panelOptions = utils.deepMerge({...this.options}, options);
+        const listViewOptions = utils.deepMerge({...this.options}, options);
 
         // Header
         if (custom.header) {
-            custom.header(panelEl);
+            custom.header(listViewEl);
         } else {
-            this.renderHeader(panelEl, title);
+            this.renderHeader(listViewEl, title);
         }
 
         // 데이터 전처리
@@ -44,76 +44,76 @@ class PanelRender {
             viewData = data;
         } else {
             const mapper = utils.createMapper(schema);
-            viewData = data.slice(0, panelOptions.size).map(mapper);
+            viewData = data.slice(0, listViewOptions.size).map(mapper);
         }
 
         // Body
         if (custom.body) {
-            custom.body(panelEl, viewData);
+            custom.body(listViewEl, viewData);
         } else {
-            this.renderBody(panelEl, viewData, panelOptions);
+            this.renderBody(listViewEl, viewData, listViewOptions);
         }
 
         // Footer
         if (custom.footer) {
-            custom.footer(panelEl);
+            custom.footer(listViewEl);
         }
 
         // Events
-        utils.bindEvents(panelEl, panelOptions.events, viewData);
+        utils.bindEvents(listViewEl, listViewOptions.events, viewData);
 
-        if (typeof panelOptions.afterRender === "function") {
+        if (typeof listViewOptions.afterRender === "function") {
             // context 생성
             const context = Object.freeze({
-                panelId,
-                panelEl,
+                id,
+                listViewEl,
                 title,
                 rawData: data,
                 viewData,
                 schema,
-                options: panelOptions,
+                options: listViewOptions,
                 ui: this
             });
 
-            panelOptions.afterRender(context);
+            listViewOptions.afterRender(context);
         }
     }
 
     /**
-     * 기본 패널 Header 영역을 렌더링한다.
+     * 기본 ListView Header 영역을 렌더링한다.
      *
-     * @param {HTMLElement} panel 패널 루트 요소
-     * @param {string} title 패널 제목 텍스트
+     * @param {HTMLElement} listView ListView 루트 요소
+     * @param {string} title ListView 제목 텍스트
      */
-    renderHeader(panel, title) {
+    renderHeader(listView, title) {
         const div = document.createElement("div");
-        div.className = utils.makeClassName(["panel-header"]);
+        div.className = utils.makeClassName(["listView-header"]);
         div.innerHTML = `<h3>${title}</h3>`;
-        panel.appendChild(div);
+        listView.appendChild(div);
     }
 
     /**
-     * 기본 패널 Body 영역을 렌더링한다.
+     * 기본 ListView Body 영역을 렌더링한다.
      *
      * viewData 기반으로 item 목록을 생성하며,
      * 각 item에는 데이터 바인딩을 위한 index dataset과 dataBindClass가 부여된다.
      *
-     * @param {HTMLElement} panel 패널 루트 요소
+     * @param {HTMLElement} listView ListView 루트 요소
      * @param {Object[]} viewData 렌더링에 사용할 데이터 목록
-     * @param {Object} panelOptions 패널 옵션
-     * @param {string} panelOptions.emptyText 데이터가 없을 때 표시할 문구
+     * @param {Object} listViewOptions ListView 옵션
+     * @param {string} listViewOptions.emptyText 데이터가 없을 때 표시할 문구
      */
-    renderBody(panel, viewData, panelOptions) {
+    renderBody(listView, viewData, listViewOptions) {
         const body = document.createElement("div");
-        body.className = utils.makeClassName(["panel-body"]);
+        body.className = utils.makeClassName(["listView-body"]);
 
         const ul = document.createElement("ul");
-        ul.className = utils.makeClassName(["panel-item-list"]);
+        ul.className = utils.makeClassName(["listView-item-list"]);
 
         if (viewData?.length) {
             viewData.forEach((item, index) => {
                 const li = document.createElement("li");
-                li.className = utils.makeClassName(["panel-item"], [utils.RULES.dataBindClass]);
+                li.className = utils.makeClassName(["listView-item"], [utils.RULES.dataBindClass]);
                 li.dataset.index = index.toString();
                 li["_uiIndex"] = index;// 이벤트 성능 용
 
@@ -134,17 +134,17 @@ class PanelRender {
             });
         } else {
             const emptyDiv = document.createElement("div");
-            emptyDiv.className = utils.makeClassName(["panel-item"], "empty");
-            emptyDiv.textContent = panelOptions.emptyText; // 원하는 문구로 변경 가능
+            emptyDiv.className = utils.makeClassName(["listView-item"], "empty");
+            emptyDiv.textContent = listViewOptions.emptyText; // 원하는 문구로 변경 가능
             ul.appendChild(emptyDiv);
         }
 
         body.appendChild(ul);
-        panel.appendChild(body);
+        listView.appendChild(body);
     }
 
     /**
-     * 패널 item의 텍스트 콘텐츠 영역을 생성한다.
+     * ListView item의 텍스트 콘텐츠 영역을 생성한다.
      *
      * @param {Object} data item 데이터
      * @param {string} data.title 제목 텍스트
@@ -153,7 +153,7 @@ class PanelRender {
      */
     createIcon(icon) {
         const div = document.createElement("div");
-        div.className = utils.makeClassName(["panel-item-icon"]);
+        div.className = utils.makeClassName(["listView-item-icon"]);
         const i = document.createElement("i");
         i.setAttribute("data-lucide", icon);
         div.appendChild(i);
@@ -161,7 +161,7 @@ class PanelRender {
     }
 
     /**
-     * 패널 item의 텍스트 콘텐츠 영역을 생성한다.
+     * ListView item의 텍스트 콘텐츠 영역을 생성한다.
      *
      * @param {Object} data item 데이터
      * @param {string} data.title 제목 텍스트
@@ -170,16 +170,16 @@ class PanelRender {
      */
     createContent(data) {
         const div = document.createElement("div");
-        div.className = utils.makeClassName(["panel-item-content"]);
+        div.className = utils.makeClassName(["listView-item-content"]);
 
         const title = document.createElement("span");
-        title.className = utils.makeClassName(["panel-item-title"]);
+        title.className = utils.makeClassName(["listView-item-title"]);
         title.textContent = data.title;
         div.appendChild(title);
 
         if (data.subText) {
             const subText = document.createElement("span");
-            subText.className = utils.makeClassName(["panel-item-subText"]);
+            subText.className = utils.makeClassName(["listView-item-subText"]);
             subText.textContent = data.subText;
             div.appendChild(subText);
         }
@@ -213,7 +213,7 @@ class PanelRender {
      */
     createIp(ip) {
         const span = document.createElement("span");
-        span.className = utils.makeClassName(["panel-right"], ["ip"]);
+        span.className = utils.makeClassName(["listView-right"], ["ip"]);
         span.textContent = ip;
         return span;
     }
@@ -226,10 +226,10 @@ class PanelRender {
      */
     createStatus(status) {
         const span = document.createElement("span");
-        span.className = utils.makeClassName(["panel-right"], ["status-badge", (status || "").toLowerCase()]);
+        span.className = utils.makeClassName(["listView-right"], ["status-badge", (status || "").toLowerCase()]);
         span.textContent = status;
         return span;
     }
 }
 
-export default PanelRender;
+export default ListView;
