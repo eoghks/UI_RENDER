@@ -70,7 +70,7 @@ export const RULES = {
  * @example
  * // 현재 스크립트 기준 상대 경로로 CSS 삽입
  * const base = new URL(".", import.meta.url).href;
- * injectCss(base + "uiRender.css");
+ * injectCss(base + "uiCommon.css");
  *
  * @example
  * // 절대 URL 사용

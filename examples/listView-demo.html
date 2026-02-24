@@ -24,9 +24,7 @@
 <div id="panel1" class="panel"></div>
 
 <script type="module">
-    import UiRender from "../src/core/uiRender.js";
-
-    const ui = new UiRender();
+    import UiRender from "../src/core/uiFactory.js";
 
     const data = [
         {title: "서버 A", subText: "192.168.0.1", rightType: "status", status: "success", icon: "server"},
@@ -43,7 +41,7 @@
         ip: d => d.ip
     };
 
-    ui.createListView(
+    UI.initListView(
         "panel1",
         "서버 상태",
         data,
