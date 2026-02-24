@@ -1,5 +1,6 @@
 import * as utils from "../utils/utils.js";
 import {ListView} from "../index.js";
+import { createLucideEngine } from "../plugins/icon/lucideEngine.js";
 
 /**
  * UI Factory v1.1
@@ -8,7 +9,7 @@ import {ListView} from "../index.js";
  * TODO: v2.0이상 공용 DOM Builder 유틸, Fragment 랜더링 or Virtual DOM
  */
 if (!window.UI) {
-  window.UI = {}; // window.UI에 객체 초기화
+    window.UI = {}; // window.UI에 객체 초기화
 }
 
 const UI = window.UI;
@@ -20,6 +21,18 @@ const UI = window.UI;
     const base = new URL(".", import.meta.url).href;
     utils.injectCss(base + "../styles/uiCommon.css");
 })();
+
+/**
+ * 기본 Icon Engine 설정
+ */
+UI.iconEngine = createLucideEngine();
+
+/**
+ * 아이콘 엔진 교체 가능
+ */
+UI.setIconEngine = function (engine) {
+    UI.iconEngine = engine;
+};
 
 /**
  * 특정 listView를 생성하고 렌더링합니다.
@@ -37,15 +50,16 @@ const UI = window.UI;
  * @param {Function} [custom.body] - 바디 커스텀 함수 (panelEl, viewData 인자)
  * @param {Function} [custom.footer] - 푸터 커스텀 함수 (panelEl 인자)
  */
-UI.initListView = function (id, title, data, schema, options = {}, custom = {}) {
+UI.initListView = function ({id, title, data, schema, options = {}, custom = {}} = {}) {
     // ListView 인스턴스 생성
-    const lv = new ListView(options);
+    const lv = new ListView({id, title, schema, options, custom, iconEngine: UI.iconEngine});
 
     // ListView Render
-    lv.render(id, title, data, schema, options, custom);
+    lv.init(data);
 
     return lv;
 }
+
 /**
  * 향후 다른 컴포넌트 초기화 함수도 같은 패턴으로 추가 가능
  * 예)

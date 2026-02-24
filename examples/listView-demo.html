@@ -41,25 +41,23 @@
         ip: d => d.ip
     };
 
-    UI.initListView(
-        "panel1",
-        "서버 상태",
-        data,
-        schema,
-        {
-            size: 10,
-            afterRender: () => {
-                window.lucide.createIcons();
-            },
-            events: [
-                {
-                    type: "click",
-                    selector: ".ui-panel-item",
-                    handler: (e, el, data, index) => {
-                        alert(`클릭됨: ${data.title}`);
+    UI.initListView({
+            id: "panel1",
+            title: "서버 상태",
+            data: data,
+            schema: schema,
+            options: {
+                size: 10,
+                events: [
+                    {
+                        type: "click",
+                        selector: ".ui-listView-item",
+                        handler: (e, el, data, index) => {
+                            alert(`클릭됨: ${data.title}`);
+                        }
                     }
-                }
-            ]
+                ]
+            }
         }
     );
 </script>

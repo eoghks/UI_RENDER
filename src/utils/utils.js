@@ -209,6 +209,52 @@ export function makeSelectorClassName(prefixed = [], raw = []) {
 }
 
 /**
+ * DOM 요소별로 등록된 이벤트 리스너 정보를 저장하는 내부 캐시.
+ *
+ * <p>
+ * key:   이벤트가 바인딩된 {@link HTMLElement}
+ * value: 해당 요소에 등록된 이벤트 리스너 목록
+ *        ({ type: string, listener: Function }[])
+ * </p>
+ *
+ * <p>
+ * {@link WeakMap}을 사용하여 DOM 요소가 제거되면
+ * 자동으로 가비지 컬렉션 대상이 되도록 설계되었습니다.
+ * </p>
+ *
+ * @private
+ * @type {WeakMap<HTMLElement, Array<{type: string, listener: EventListener}>>}
+ */
+const EVENT_STORE = new WeakMap();
+
+/**
+ * 지정된 DOM 요소에 바인딩된 모든 이벤트 리스너를 제거합니다.
+ *
+ * <p>
+ * {@link WeakMap}에 저장된 이벤트 정보를 기반으로,
+ * 해당 요소에 등록된 모든 이벤트 리스너를 제거합니다.
+ * </p>
+ *
+ * <p>
+ * 이 함수는 {@link bindEvents}를 통해 등록된 이벤트만 제거합니다.
+ * </p>
+ *
+ * @param {HTMLElement} el 이벤트를 제거할 대상 DOM 요소
+ */
+export function unbindEvents(el) {
+    if (!el) {
+        return;
+    }
+
+    const stored = EVENT_STORE.get(el);
+    if (stored) {
+        stored.forEach(({type, listener}) => {
+            el.removeEventListener(type, listener);
+        });
+    }
+}
+
+/**
  * 이벤트 위임 방식으로 패널에 이벤트를 바인딩한다.
  *
  * - 이벤트 타입별로 listener는 1개만 등록된다.
@@ -226,6 +272,10 @@ export function makeSelectorClassName(prefixed = [], raw = []) {
  * @param {Object[]} viewData 데이터 바인딩 목록
  */
 export function bindEvents(el, events = [], viewData = []) {
+    if (!el) {
+        return;
+    }
+    this.unbindEvents(el);
     // events Type 별로 그룹 핑
     const grouped = events.reduce((acc, event) => {
         if (!acc[event.type]) {
@@ -237,6 +287,7 @@ export function bindEvents(el, events = [], viewData = []) {
     }, {});
 
     // 이벤트 타입별 listener 하나만 등록
+    const listeners = [];
     Object.entries(grouped).forEach(([type, eventList]) => {
 
             const selectorMap = new Map();
@@ -253,38 +304,33 @@ export function bindEvents(el, events = [], viewData = []) {
                 selectorMap.set(ev.selector, list);
             });
 
-            el.addEventListener(type, e => {
-                // 선택한 Element부터 위로 올라가며 가장 가까운 이벤트 탐색
+            const listener = e => {
                 let node = e.target;
 
                 while (node && node !== el) {
                     for (const [selector, evList] of selectorMap) {
-                        if (!node.matches(selector)) {
-                            continue;
-                        }
+                        if (!node.matches(selector)) continue;
 
-                        // 데이터 item 찾기 (최적화)
                         const {index, data} = resolveItemData(node, viewData);
 
-                        // 같은 selector에 여러 이벤트 실행
                         evList.forEach(ev => {
                             ev.handler(e, node, data, index, el);
                         });
 
-                        // 가장 가까운 매칭만 실행
                         return;
                     }
-
                     node = node.parentElement;
                 }
 
-                // selector 없는 element 자체 이벤트 처리
                 elEvents.forEach(ev => {
                     ev.handler(e, el, null, NaN, el);
                 });
-            });
+            }
+            el.addEventListener(type, listener);
+            listeners.push({type, listener});
         }
     );
+    EVENT_STORE.set(el, listeners);
 }
 
 export function resolveItemData(node, viewData) {
@@ -306,4 +352,21 @@ export function resolveItemData(node, viewData) {
         index,
         data: viewData[index]
     };
+}
+
+export function clear(el) {
+    el.innerHTML = "";
+}
+
+export function renderCustom(targetEl, fn) {
+    const node = fn(this.title);
+    if (node instanceof HTMLElement) {
+        targetEl.appendChild(node);
+    } else if (typeof node === "string") {
+        targetEl.innerHTML = node;
+    } else {
+        throw new TypeError(
+            "Custom render function must return an HTMLElement or HTML string."
+        );
+    }
 }
