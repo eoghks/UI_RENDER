@@ -55,6 +55,7 @@ export function isEmpty(value) {
 export const RULES = {
     classPrefix: "dh",
     dataBindClass: "data-bind-item",
+    eventClass: "dh-event"
 };
 
 /**
@@ -256,7 +257,7 @@ export function unbindEvents(el) {
                 selectors.forEach(selector => {
                     const targets = el.querySelectorAll(selector);
                     targets.forEach(target => {
-                        target.classList.remove(this.makeClassName("event"));
+                        target.classList.remove(this.RULES.eventClass);
                     });
                 });
             }
@@ -316,7 +317,7 @@ export function bindEvents(el, events = [], viewData = []) {
                 // 실제 DOM에 표시용 클래스 추가
                 const targets = el.querySelectorAll(ev.selector);
                 targets.forEach(target => {
-                    target.classList.add(this.makeClassName("event"));
+                    target.classList.add(this.RULES.eventClass);
                 });
             });
 
