@@ -60,3 +60,11 @@
     background: #fff1e6; /* 연한 주황 */
     color: #c24e00;      /* 진한 주황 */
 }
+
+.dh-event-active{
+    outline: 1px solid #4dabf7 ;
+    background-color: rgba(77, 171, 247, 0.1);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+}

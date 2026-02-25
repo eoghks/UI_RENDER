@@ -55,7 +55,13 @@ export function isEmpty(value) {
 export const RULES = {
     classPrefix: "dh",
     dataBindClass: "data-bind-item",
-    eventClass: "dh-event"
+    get eventClass() {
+        return `${this.classPrefix}-event`;
+    },
+
+    get eventActiveClass() {
+        return `${this.eventClass}-active`;
+    }
 };
 
 /**
@@ -252,12 +258,12 @@ export function unbindEvents(el) {
         stored.forEach(({type, listener, selectors}) => {
             el.removeEventListener(type, listener);
 
-            // 👇 표시용 class 제거
+            // 표시용 class 제거
             if (selectors) {
                 selectors.forEach(selector => {
                     const targets = el.querySelectorAll(selector);
                     targets.forEach(target => {
-                        target.classList.remove(this.RULES.eventClass);
+                        target.classList.remove(RULES.eventClass);
                     });
                 });
             }
@@ -286,7 +292,7 @@ export function bindEvents(el, events = [], viewData = []) {
     if (!el || !events.length) {
         return;
     }
-    this.unbindEvents(el);
+    unbindEvents(el);
     // events Type 별로 그룹 핑
     const grouped = events.reduce((acc, event) => {
         if (!acc[event.type]) {
@@ -317,7 +323,7 @@ export function bindEvents(el, events = [], viewData = []) {
                 // 실제 DOM에 표시용 클래스 추가
                 const targets = el.querySelectorAll(ev.selector);
                 targets.forEach(target => {
-                    target.classList.add(this.RULES.eventClass);
+                    target.classList.add(RULES.eventClass);
                 });
             });
 
@@ -348,6 +354,67 @@ export function bindEvents(el, events = [], viewData = []) {
         }
     );
     EVENT_STORE.set(el, listeners);
+    // Event 활성화 이벤트
+    enableNearestHover(el);
+}
+
+export function enableNearestHover(el) {
+    if (!el) {
+        return;
+    }
+
+    let currentActive = null;
+
+    const mouseOver = e => {
+        const target = e.target.closest(`.${RULES.eventClass}`);
+        if (!target || !el.contains(target)) return;
+
+        if (currentActive && currentActive !== target) {
+            currentActive.classList.remove(RULES.eventActiveClass);
+        }
+
+        currentActive = target;
+        currentActive.classList.add(RULES.eventActiveClass);
+    };
+
+    const mouseOut = e => {
+        if (!currentActive) {
+            return;
+        }
+
+        const related = e.relatedTarget;
+
+        // 완전히 DOM 밖으로 나감
+        if (!related) {
+            currentActive.classList.remove(RULES.eventActiveClass);
+            currentActive = null;
+            return;
+        }
+
+        // 2현재 active 영역 내부 이동이면 무시
+        if (currentActive.contains(related)) {
+            return;
+        }
+
+        // 다른 eventClass 요소로 이동하면 mouseOver가 처리
+        const nextTarget = related.closest(`.${RULES.eventClass}`);
+        if (nextTarget) {
+            return;
+        }
+
+        // 완전히 벗어난 경우만 제거
+        currentActive.classList.remove(RULES.eventActiveClass);
+        currentActive = null;
+    };
+
+    el.addEventListener("mouseover", mouseOver);
+    el.addEventListener("mouseout", mouseOut);
+
+    // unbind 대비 저장
+    const stored = EVENT_STORE.get(el) || [];
+    stored.push({type: "mouseover", listener: mouseOver});
+    stored.push({type: "mouseout", listener: mouseOut});
+    EVENT_STORE.set(el, stored);
 }
 
 export function resolveItemData(node, viewData) {
