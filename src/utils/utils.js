@@ -53,7 +53,7 @@ export function isEmpty(value) {
  * const elements = document.querySelectorAll(`.${RULES.dataBindClass}`);
  */
 export const RULES = {
-    classPrefix: "ui",
+    classPrefix: "dh",
     dataBindClass: "data-bind-item",
 };
 
@@ -248,8 +248,18 @@ export function unbindEvents(el) {
 
     const stored = EVENT_STORE.get(el);
     if (stored) {
-        stored.forEach(({type, listener}) => {
+        stored.forEach(({type, listener, selectors}) => {
             el.removeEventListener(type, listener);
+
+            // 👇 표시용 class 제거
+            if (selectors) {
+                selectors.forEach(selector => {
+                    const targets = el.querySelectorAll(selector);
+                    targets.forEach(target => {
+                        target.classList.remove(this.makeClassName("event"));
+                    });
+                });
+            }
         });
     }
 }
@@ -272,7 +282,7 @@ export function unbindEvents(el) {
  * @param {Object[]} viewData 데이터 바인딩 목록
  */
 export function bindEvents(el, events = [], viewData = []) {
-    if (!el) {
+    if (!el || !events.length) {
         return;
     }
     this.unbindEvents(el);
@@ -302,6 +312,12 @@ export function bindEvents(el, events = [], viewData = []) {
                 const list = selectorMap.get(ev.selector) || [];
                 list.push(ev);
                 selectorMap.set(ev.selector, list);
+
+                // 실제 DOM에 표시용 클래스 추가
+                const targets = el.querySelectorAll(ev.selector);
+                targets.forEach(target => {
+                    target.classList.add(this.makeClassName("event"));
+                });
             });
 
             const listener = e => {
@@ -327,7 +343,7 @@ export function bindEvents(el, events = [], viewData = []) {
                 });
             }
             el.addEventListener(type, listener);
-            listeners.push({type, listener});
+            listeners.push({type, listener, selectors: [...selectorMap.keys()]});
         }
     );
     EVENT_STORE.set(el, listeners);
