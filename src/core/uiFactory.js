@@ -1,6 +1,6 @@
 import * as utils from "../utils/utils.js";
 import {ListView} from "../index.js";
-import { createLucideEngine } from "../plugins/icon/lucideEngine.js";
+import { createLucideEngine } from "../plugins/lucide/lucideEngine.js";
 
 /**
  * UI Factory v1.1
