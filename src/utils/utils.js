@@ -40,17 +40,49 @@ export function isEmpty(value) {
 }
 
 /**
- * UI 컴포넌트 관련 규칙 및 상수 모음
+ * UI 네이밍 규칙 및 클래스 규약을 중앙에서 관리하는 객체입니다.
  *
- * @property {string} classPrefix - UI 클래스명 접두사 (기본값: "ui")
- * @property {string} dataBindClass - 데이터 바인딩용 클래스명 (기본값: "data-bind-item")
+ * UI 엔진 전반에서 일관된 클래스 네이밍 전략을 제공하며,
+ * 동적으로 생성되는 모든 클래스명은 이 객체를 기반으로 정의되어야 합니다.
+ * 이를 통해 예측 가능성과 유지보수성을 확보할 수 있습니다.
+ *
+ * 구성 설명:
+ * - `classPrefix` : 모든 UI 관련 클래스의 기본 네임스페이스 접두사
+ * - `dataBindClass` : 데이터 바인딩 대상 요소를 식별하기 위한 클래스명
+ * - `eventClass` : `classPrefix`를 기반으로 생성되는 이벤트 대상 클래스
+ * - `eventActiveClass` : 이벤트 요소의 활성 상태를 나타내는 클래스
+ *
+ * ⚠ `classPrefix`를 변경하면 이를 기반으로 생성되는 모든 클래스명에 영향을 미칩니다.
+ *
+ * @readonly
+ *
+ * @property {string} classPrefix
+ * UI 클래스의 루트 네임스페이스 접두사
+ * 기본값: `"dh"`
+ *
+ * @property {string} dataBindClass
+ * 데이터 바인딩 요소를 식별하기 위한 클래스명
+ * 기본값: `"data-bind-item"`
+ *
+ * @property {string} eventClass
+ * 이벤트 처리가 가능한 요소에 적용되는 클래스명
+ * 형식: `${classPrefix}-event`
+ *
+ * @property {string} eventActiveClass
+ * 이벤트 요소의 활성(active) 상태를 나타내는 클래스명
+ * 형식: `${classPrefix}-event-active`
  *
  * @example
- * // 클래스명 생성 시 접두사 사용
- * const cls = `${RULES.classPrefix}-panel`; // "ui-panel"
+ * // 접두사를 활용한 클래스 생성
+ * const cls = `${RULES.classPrefix}-panel`; // "dh-panel"
  *
+ * @example
  * // 데이터 바인딩 요소 선택
- * const elements = document.querySelectorAll(`.${RULES.dataBindClass}`);
+ * const items = document.querySelectorAll(`.${RULES.dataBindClass}`);
+ *
+ * @example
+ * // 활성 상태 클래스 적용
+ * element.classList.add(RULES.eventActiveClass);
  */
 export const RULES = {
     classPrefix: "dh",
@@ -358,6 +390,32 @@ export function bindEvents(el, events = [], viewData = []) {
     enableNearestHover(el);
 }
 
+/**
+ * 지정한 컨테이너 요소에 위임 방식(delegate)의 hover 동작을 활성화합니다.
+ *
+ * 이 함수는 컨테이너에 `mouseover` 및 `mouseout` 이벤트를 등록하고,
+ * `RULES.eventClass`에 해당하는 가장 가까운 요소를 찾아
+ * 동적으로 활성 클래스(active class)를 적용합니다.
+ *
+ * 동작 방식:
+ * - 마우스가 올라간 가장 가까운 요소에 `RULES.eventActiveClass`를 추가합니다.
+ * - 동시에 하나의 요소만 활성 상태를 유지합니다.
+ * - 포인터가 해당 요소를 완전히 벗어나면 활성 클래스를 제거합니다.
+ * - 동일한 활성 요소 내부에서의 이동은 무시합니다.
+ *
+ * 등록된 이벤트 리스너는 이후 해제를 위해 내부 `EVENT_STORE`에 저장됩니다.
+ *
+ * @param {HTMLElement} el
+ * hover 위임을 적용할 컨테이너 요소
+ *
+ * @example
+ * enableNearestHover(containerEl);
+ *
+ * @remarks
+ * - 성능을 위해 이벤트 위임 방식을 사용합니다.
+ * - 동적으로 생성/변경되는 리스트 또는 그리드 UI 구조에 적합합니다.
+ * - 필요 시 별도의 unbind 함수로 이벤트 리스너를 제거해야 합니다.
+ */
 export function enableNearestHover(el) {
     if (!el) {
         return;
@@ -417,6 +475,40 @@ export function enableNearestHover(el) {
     EVENT_STORE.set(el, stored);
 }
 
+/**
+ * DOM 노드로부터 바인딩된 아이템 데이터를 조회합니다.
+ *
+ * 전달된 노드(node)에서 시작하여 상위 DOM 트리를 탐색하고,
+ * data-bind 선택자에 해당하는 가장 가까운 요소를 찾습니다.
+ * 이후 해당 요소의 인덱스를 추출한 뒤,
+ * 전달받은 viewData 배열에서 대응하는 데이터를 반환합니다.
+ *
+ * 인덱스는 다음 우선순위로 결정됩니다:
+ * 1. `element._uiIndex` (내부에서 사용하는 빠른 접근용 인덱스)
+ * 2. `element.dataset.index`
+ *
+ * 유효한 아이템 요소 또는 인덱스를 찾지 못한 경우,
+ * `{ index: NaN, data: null }`을 반환합니다.
+ *
+ * @param {HTMLElement | Element} node
+ * 탐색을 시작할 DOM 노드 (예: event.target)
+ *
+ * @param {Array<any>} viewData
+ * 현재 렌더링에 사용 중인 데이터 배열
+ *
+ * @returns {{ index: number, data: any | null }}
+ * 다음 정보를 포함한 객체:
+ * - `index`: 계산된 아이템 인덱스 (유효하지 않으면 NaN)
+ * - `data`: 해당 인덱스에 대응하는 데이터 (없으면 null)
+ *
+ * @example
+ * element.addEventListener("click", (e) => {
+ *   const { index, data } = resolveItemData(e.target, viewData);
+ *   if (!Number.isNaN(index)) {
+ *     console.log("클릭된 항목:", index, data);
+ *   }
+ * });
+ */
 export function resolveItemData(node, viewData) {
     const itemEl = node.closest(
         makeSelectorClassName([], [RULES.dataBindClass])
@@ -438,12 +530,58 @@ export function resolveItemData(node, viewData) {
     };
 }
 
+/**
+ * 지정된 DOM 요소의 모든 자식 노드를 제거합니다.
+ *
+ * <p>
+ * 내부적으로 {@code innerHTML = ""}을 사용하여
+ * 요소의 콘텐츠를 초기화합니다.
+ * </p>
+ *
+ * @param {HTMLElement} el 초기화할 DOM 요소
+ */
 export function clear(el) {
     el.innerHTML = "";
 }
 
-export function renderCustom(targetEl, fn) {
-    const node = fn(this.title);
+/**
+ * 사용자 정의 렌더링 함수를 실행하고,
+ * 반환된 결과를 지정된 대상 요소에 렌더링합니다.
+ *
+ * 렌더 함수는 전달된 `context` 객체를 인자로 받아
+ * {@link HTMLElement} 또는 HTML 문자열을 반환해야 합니다.
+ *
+ * 동작 방식:
+ * - {@link HTMLElement} 반환 → `appendChild()`로 추가
+ * - 문자열 반환 → `innerHTML`로 설정
+ * - 그 외 타입 반환 → {@link TypeError} 발생
+ *
+ * @param {HTMLElement} targetEl
+ * 렌더링 대상이 되는 DOM 요소
+ *
+ * @param {(context: Object) => (HTMLElement|string)} fn
+ * 사용자 정의 렌더 함수.
+ * UI 컨텍스트를 인자로 받아 HTMLElement 또는 HTML 문자열을 반환해야 합니다.
+ *
+ * @param {Object} context
+ * 렌더 함수에 전달할 UI 컨텍스트 객체
+ *
+ * @throws {TypeError}
+ * 렌더 함수가 HTMLElement 또는 문자열을 반환하지 않는 경우 발생
+ *
+ * @example
+ * renderCustom(container, (ctx) => {
+ *   const el = document.createElement("div");
+ *   el.textContent = ctx.title;
+ *   return el;
+ * }, ui.getContext());
+ *
+ * @remarks
+ * - 문자열 반환 시 기존 자식 노드는 모두 교체됩니다.
+ * - HTMLElement 반환 시 기존 내용 뒤에 추가됩니다.
+ */
+export function renderCustom(targetEl, fn, context) {
+    const node = fn(context);
     if (node instanceof HTMLElement) {
         targetEl.appendChild(node);
     } else if (typeof node === "string") {
