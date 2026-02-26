@@ -31,6 +31,7 @@
     border: 1px solid #e1e4e8;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* Status Badge */

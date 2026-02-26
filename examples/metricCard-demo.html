@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>MetricCard Demo</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 30px;
+            background: #ffffff;
+        }
+
+        #panel1 {
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>UiRender MetricCard Demo</h2>
+
+<div id="panel1" class="panel"></div>
+
+<script type="module">
+    import UiRender from "../src/core/uiFactory.js";
+
+    const cardFooter = {
+        value: "View Detail",
+        icon: "chevron-right",
+        url: "#"
+    }
+
+    UI.initMatricCard({
+        id: "panel1",
+        title: {
+            value: "사용자",
+            backgroundColor: "blue",
+            icon: "monitor",
+            iconPosition: "right"
+        },
+        data: {
+            value: 1000,
+            unit: "명",
+            delta: {
+                type: "up",
+                value: "13"
+            }
+        },
+        footer: cardFooter,
+    });
+</script>
+
+</body>
+</html>

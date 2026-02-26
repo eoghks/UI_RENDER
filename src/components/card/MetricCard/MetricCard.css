@@ -1,0 +1,77 @@
+/* Metric Card Styling */
+.card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e1e4e8;
+    display: flex;
+    flex-direction: column;
+}
+
+.dh-metricCard-header {
+    padding: 0.8rem 1.2rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.blue.dh-metricCard-header {
+    background-color: #4b89dc;
+}
+
+.cyan.dh-metricCard-header {
+    background-color: #3baeda;
+}
+
+.orange.dh-metricCard-header {
+    background-color: #f6bb42;
+}
+
+.dh-metricCard-body {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.counter-group {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+}
+
+.counter {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.unit {
+    color: #666666;
+    font-size: 1.1rem;
+}
+
+.dh-metricCard-footer {
+    background: #f8f9fa;
+    border-top: 1px solid #e1e4e8;
+    padding: 0.5rem 1.2rem;
+    text-align: right;
+}
+
+.view-detail {
+    text-decoration: none;
+    color: #666666;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.view-detail:hover {
+    color: #004b8d;
+}

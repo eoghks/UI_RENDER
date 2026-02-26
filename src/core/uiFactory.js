@@ -1,6 +1,6 @@
 import * as utils from "../utils/utils.js";
-import {ListView} from "../index.js";
-import { createLucideEngine } from "../plugins/lucide/lucideEngine.js";
+import {ListView, MetricCard} from "../index.js";
+import {createLucideEngine} from "../plugins/lucide/lucideEngine.js";
 
 /**
  * UI Factory v1.1
@@ -61,10 +61,51 @@ UI.initListView = function ({id, title, data, schema, options = {}, custom = {}}
 }
 
 /**
- * 향후 다른 컴포넌트 초기화 함수도 같은 패턴으로 추가 가능
- * 예)
- * UI.initCard("#myCard", options)
- * UI.initCardGroup(".cards", options)
+ * MetricCard를 생성하고 렌더링합니다.
+ *
+ * - 내부적으로 {@link MetricCard} 인스턴스를 생성합니다.
+ * - 지정한 DOM ID 요소에 카드 형태의 메트릭 UI를 렌더링합니다.
+ * - footer 링크, 커스텀 영역, 이벤트 및 후처리를 지원합니다.
+ *
+ * @param {Object} params
+ * @param {string} params.id - 렌더링할 MetricCard의 DOM ID
+ * @param {Object} params.title - 카드 header 정보
+ * @param {string} [params.title.value] - 카드 제목 텍스트
+ * @param {string} [params.title.icon] - header 아이콘 이름
+ * @param {"left"|"right"} [params.title.iconPosition="right"] - 아이콘 위치
+ * @param {string} [params.title.backgroundColor] - header 배경 클래스
+ *
+ * @param {Object} params.data - 카드에 표시할 메트릭 데이터
+ * @param {string|number} params.data.value - 메인 수치 값
+ * @param {string} [params.data.unit] - 단위 표시
+ * @param {Object} [params.data.delta] - 증감 정보
+ * @param {"up"|"down"} params.data.delta.type - 증감 방향
+ * @param {string|number} params.data.delta.value - 증감 수치
+ *
+ * @param {Object} [params.footer] - footer 설정
+ * @param {string} [params.footer.value] - footer 링크 텍스트
+ * @param {string} [params.footer.url] - 이동 URL
+ *
+ * @param {Object} [params.options={}] - MetricCard 추가 옵션
+ * @param {string} [params.options.emptyText="데이터 없음"] - 데이터가 없을 때 표시 문구
+ * @param {Array<Object>} [params.options.events] - 이벤트 바인딩 목록
+ * @param {Function} [params.options.afterDraw] - 렌더링 완료 후 실행 콜백
+ *
+ * @param {Object} [params.custom={}] - 커스텀 렌더링 함수
+ * @param {Function} [params.custom.header] - header 커스텀 렌더링
+ * @param {Function} [params.custom.body] - body 커스텀 렌더링
+ * @param {Function} [params.custom.footer] - footer 커스텀 렌더링
+ *
+ * @returns {MetricCard} 생성된 MetricCard 인스턴스
  */
+UI.initMatricCard = function ({id, title, data, footer, options = {}, custom = {}} = {}) {
+    // MetricCard를 인스턴스 생성
+    const mc = new MetricCard({id, title, footer, options, custom, iconEngine: UI.iconEngine});
+
+    // MetricCard를 Render
+    mc.init(data);
+
+    return mc;
+}
 
 export default UI;
