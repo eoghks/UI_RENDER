@@ -41,7 +41,7 @@ UI.setIconEngine = function (engine) {
  * - 패널 ID로 DOM 요소를 찾아서 렌더링하며, 커스텀 옵션과 후처리도 지원합니다.
  *
  * @param {string} id - 렌더링할 ListView의 DOM ID
- * @param {string} title - ListView의 제목
+ * @param {string} title - ListView의 Header 정보
  * @param {Array<Object>} data - 렌더링할 데이터 배열
  * @param {Object} [schema] - 데이터 매핑 스키마 (옵션)
  * @param {Object} [options={}] - ListView 전달할 추가 옵션

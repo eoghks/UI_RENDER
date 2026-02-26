@@ -159,7 +159,7 @@ class ListView {
             return;
         }
 
-        this.headerEl.innerHTML = `<h3>${this.title}</h3>`;
+        this.headerEl.innerHTML = `<h3>${this.title.value}</h3>`;
     }
 
     /**
@@ -208,6 +208,13 @@ class ListView {
                 li.className = utils.makeClassName(["listView-item"], [utils.RULES.dataBindClass]);
                 li.dataset.index = index.toString();
                 li["_uiIndex"] = index;// 이벤트 성능 용
+
+                /* html 속성에 data 저장 기능(필요하면 추가)
+                Object.entries(item).forEach(([key, value]) => {
+                    // HTML 속성으로 안전하게 변환 (특수문자 등)
+                    const safeKey = key.replace(/[^a-zA-Z0-9\-_]/g, "_");
+                    li.dataset[safeKey] = value;
+                }); */
 
                 if (item.icon) {
                     const iconEl = this.renderIcon(item.icon);
