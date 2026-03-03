@@ -63,7 +63,7 @@ class ListView {
         this.data = [];
 
         const base = new URL(".", import.meta.url).href;
-        utils.injectCss(base + "listView.css");
+        utils.injectCss(base + "ListView.css");
     }
 
     /**

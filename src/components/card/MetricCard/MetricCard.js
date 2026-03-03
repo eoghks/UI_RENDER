@@ -126,7 +126,7 @@ class MetricCard {
         this.renderFooter();
 
         this.afterDraw();
-        utils.bindEvents(this.el, this.options.events, [this.data]);
+        utils.bindEvents(this.el, this.options.events, this.viewData);
     }
 
     /**
@@ -135,6 +135,7 @@ class MetricCard {
      */
     setData(data = {}) {
         this.data = data;
+        this.viewData = [data];
         this.draw();
     }
 
@@ -195,7 +196,7 @@ class MetricCard {
 
         const wrapper = this.createBodyWrapper();
 
-        if (this.data) {
+        if (Array.isArray(this.viewData) && this.viewData.length > 0) {
             wrapper.classList.add(utils.makeClassName([],[utils.RULES.dataBindClass]));
             wrapper.dataset.index = "0";
             wrapper["_uiIndex"] = 0;// 이벤트 성능 용
@@ -226,16 +227,17 @@ class MetricCard {
      * @returns {HTMLElement}
      */
     createMainSection() {
+        const d = this.viewData[0];
         const main = document.createElement("div");
         main.className = utils.makeClassName([], ["counter-group"]);
 
         const counter = document.createElement("span");
         counter.className = utils.makeClassName([], ["counter"]);
-        counter.innerHTML = this.data.value;
+        counter.innerHTML = d.value;
 
         const unit = document.createElement("span");
         unit.className = utils.makeClassName([], ["unit"]);
-        unit.innerHTML = this.data.unit;
+        unit.innerHTML = d.unit;
 
         main.append(counter, unit);
         return main;
@@ -246,7 +248,7 @@ class MetricCard {
      * @returns {boolean}
      */
     shouldRenderDelta() {
-        return this.data?.delta && Number(this.data.delta.value) > 0;
+        return this.viewData[0]?.delta && Number(this.viewData[0].delta.value) > 0;
     }
 
     /**
@@ -254,7 +256,7 @@ class MetricCard {
      * @returns {HTMLElement}
      */
     createDeltaSection() {
-        const {type, value} = this.data.delta;
+        const {type, value} = this.viewData[0].delta;
 
         const delta = document.createElement("div");
         delta.className = utils.makeClassName([], ["delta", type]);
@@ -347,6 +349,7 @@ class MetricCard {
             el: this.el,
             title: this.title,
             rawData: this.data,
+            viewDat: this.viewData,
             options: this.options,
             ui: this
         };

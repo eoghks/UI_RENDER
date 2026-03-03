@@ -1,0 +1,95 @@
+/* Node */
+.dh-node {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+}
+
+.dh-node:hover {
+    border-color: #4dabf7;
+    background-color: rgba(77, 171, 247, 0.06);
+}
+
+.dh-node-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    transition: all 0.15s ease;
+}
+
+/* 태그 */
+.dh-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: #e7f5ff;
+    color: #1971c2;
+}
+
+/* 정보 영역 */
+.dh-node-details {
+    flex: 1;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.85rem;
+}
+
+.dh-detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.dh-detail-item .label {
+    font-size: 0.7rem;
+    color: #868e96;
+    margin-bottom: 3px;
+}
+
+.dh-detail-item .value {
+    font-weight: 600;
+    color: #212529;
+}
+
+/* 버튼 영역 */
+.dh-node-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dh-detail-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background: white;
+    cursor: pointer;
+
+    transition: all 0.15s ease;
+}
+
+.dh-detail-button:hover {
+    background: #f1f3f5;
+    transform: translateY(-1px);
+}
+
+/* 상태 배지 */
+.status-badge {
+    margin-left: auto;   /* ⭐ 핵심 */
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.status-badge.running {
+    background: #e6fcf5;
+    color: #0ca678;
+}

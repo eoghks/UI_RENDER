@@ -32,11 +32,10 @@
     background-color: #f6bb42;
 }
 
-.dh-metricCard-body {
+.dh-metricCard-row {
     padding: 1.5rem;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: baseline;
 }
 
 .counter-group {
@@ -74,4 +73,24 @@
 
 .view-detail:hover {
     color: #004b8d;
+}
+
+
+/* 상태별 색상 */
+.delta.up {
+    color: #eb5757; /* 빨강 */
+
+}
+
+.delta.down {
+    color: #2f80ed; /* 파랑 */
+}
+
+.delta.same {
+    color: #999; /* 변화 없음 */
+}
+
+.delta {
+    font-size: 1.0rem;
+    font-weight: 600;
 }

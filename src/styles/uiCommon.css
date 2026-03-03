@@ -34,7 +34,7 @@
     overflow: hidden;
 }
 
-/* Status Badge */
+/* Status */
 .status-badge {
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
@@ -68,4 +68,69 @@
     cursor: pointer;
     border-radius: 3px;
     transition: all 0.15s ease;
+}
+
+.status-badge.running,
+.status-badge.standby {
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+
+.status-badge.running::before,
+.status-badge.standby::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+
+.status-badge.running {
+    background: #e6ffed;
+    color: #22863a;
+}
+
+
+.status-badge.running::before {
+    background: #22863a;
+}
+
+
+.status-badge.standby {
+    background: #fff8e1;
+    color: #b78103;
+}
+
+
+.status-badge.standby::before {
+    background: #b78103;
+}
+
+/* Tag */
+.dh-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    min-width: 60px;
+    text-align: center;
+}
+
+
+.dh-tag.master {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+
+.dh-tag.slave {
+    background: #f1f5f9;
+    color: #64748b;
 }

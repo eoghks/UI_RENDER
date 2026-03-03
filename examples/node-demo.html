@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Node Demo</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 30px;
+            background: #ffffff;
+        }
+
+        .panel {
+            margin: 10px;
+            width: 600px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>UiRender Node Demo</h2>
+
+<div id="panel1" class="panel"></div>
+<div id="panel2" class="panel"></div>
+
+<script type="module">
+    import UiRender from "../src/core/uiFactory.js";
+    // tag data{], status
+
+    const data = [
+        {
+            type: "tag",
+            value: "MASTER"
+        },
+        {
+            type: "details",
+            detailData: [
+                {
+                    label: "IP Address",
+                    value: "10.30.95.11",
+                },
+                {
+                    label: "Port",
+                    value: "8080",
+                },
+            ],
+        },
+        {
+            type: "actions",
+            actionData: [
+                {
+                    type: "button",
+                    id: "start",
+                    class: "btn btn-start",
+                    valueType: "icon",
+                    value: "play",
+                    onClick() {
+                        alert("start");
+                    }
+                },
+                {
+                    type: "button",
+                    id: "stop",
+                    class: "btn btn-stop",
+                    valueType: "icon",
+                    value: "square",
+                    onClick() {
+                        alert("stop");
+                    }
+                }
+            ]
+        },
+        {
+            type: "status",
+            value: "Running"
+        }
+    ];
+
+    UI.initNode({id: "panel1", data})
+
+    const data2 = [
+        {
+            type: "tag",
+            value: "SLAVE"
+        },
+        {
+            type: "details",
+            detailData: [
+                {
+                    label: "IP Address",
+                    value: "10.30.95.12"
+                },
+                {
+                    label: "Port",
+                    value: "8080"
+                }
+            ]
+        },
+        {
+            type: "status",
+            value: "StandBy"
+        }
+    ];
+
+    UI.initNode({id: "panel2", data: data2})
+</script>
+
+</body>
+</html>

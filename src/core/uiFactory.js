@@ -1,5 +1,5 @@
 import * as utils from "../utils/utils.js";
-import {ListView, MetricCard} from "../index.js";
+import {ListView, MetricCard, Node} from "../index.js";
 import {createLucideEngine} from "../plugins/lucide/lucideEngine.js";
 
 /**
@@ -106,6 +106,16 @@ UI.initMatricCard = function ({id, title, data, footer, options = {}, custom = {
     mc.init(data);
 
     return mc;
+}
+
+UI.initNode = function ({id, data, options = {}, custom = {}} = {}) {
+    // MetricCard를 인스턴스 생성
+    const node = new Node({id, options, custom, iconEngine: UI.iconEngine});
+
+    // MetricCard를 Render
+    node.init(data);
+
+    return node;
 }
 
 export default UI;

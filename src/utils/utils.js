@@ -353,6 +353,10 @@ export function bindEvents(el, events = [], viewData = []) {
                 selectorMap.set(ev.selector, list);
 
                 // 실제 DOM에 표시용 클래스 추가
+                if(!ev.useEventClass) {
+                    return;
+                }
+
                 const targets = el.querySelectorAll(ev.selector);
                 targets.forEach(target => {
                     target.classList.add(RULES.eventClass);
@@ -591,4 +595,36 @@ export function renderCustom(targetEl, fn, context) {
             "Custom render function must return an HTMLElement or HTML string."
         );
     }
+}
+
+/**
+ * HTML 요소를 생성하는 유틸 함수
+ *
+ * @param {string} tag - 생성할 HTML 태그 이름 (ex: 'div', 'span')
+ * @param {string} [text] - 요소에 설정할 텍스트 내용 (XSS 방지를 위해 textContent 사용)
+ * @param {string} [className] - 요소에 적용할 CSS 클래스명
+ * @param {string} [html] - 요소에 설정할 HTML 문자열 (주의: XSS 위험)
+ * @param {Object.<string, string>} [attrs={}] - 추가로 설정할 속성 객체 (ex: { id: 'test', 'data-id': '123' })
+ *
+ * @returns {HTMLElement} 생성된 HTML 요소
+ */
+export function createElement(tag, text, className, html, attrs = {}) {
+    const el = document.createElement(tag);
+
+    if (className) {
+        el.className = className;
+    }
+
+    if (html) {
+        el.innerHTML = html
+    } else {
+        el.textContent = text;
+    }
+
+
+    Object.entries(attrs).forEach(([key, value]) => {
+        el.setAttribute(key, value);
+    });
+
+    return el;
 }
