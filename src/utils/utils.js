@@ -353,7 +353,7 @@ export function bindEvents(el, events = [], viewData = []) {
                 selectorMap.set(ev.selector, list);
 
                 // 실제 DOM에 표시용 클래스 추가
-                if(!ev.useEventClass) {
+                if (!ev.useEventClass) {
                     return;
                 }
 
@@ -538,14 +538,14 @@ export function resolveItemData(node, viewData) {
  * 지정된 DOM 요소의 모든 자식 노드를 제거합니다.
  *
  * <p>
- * 내부적으로 {@code innerHTML = ""}을 사용하여
+ * 내부적으로 {@code textContent = ""}을 사용하여
  * 요소의 콘텐츠를 초기화합니다.
  * </p>
  *
  * @param {HTMLElement} el 초기화할 DOM 요소
  */
 export function clear(el) {
-    el.innerHTML = "";
+    el.textContent = "";
 }
 
 /**
@@ -557,7 +557,7 @@ export function clear(el) {
  *
  * 동작 방식:
  * - {@link HTMLElement} 반환 → `appendChild()`로 추가
- * - 문자열 반환 → `innerHTML`로 설정
+ * - 문자열 반환 → `textContent`로 설정
  * - 그 외 타입 반환 → {@link TypeError} 발생
  *
  * @param {HTMLElement} targetEl
@@ -589,7 +589,7 @@ export function renderCustom(targetEl, fn, context) {
     if (node instanceof HTMLElement) {
         targetEl.appendChild(node);
     } else if (typeof node === "string") {
-        targetEl.innerHTML = node;
+        targetEl.textContent = node;
     } else {
         throw new TypeError(
             "Custom render function must return an HTMLElement or HTML string."
@@ -603,21 +603,18 @@ export function renderCustom(targetEl, fn, context) {
  * @param {string} tag - 생성할 HTML 태그 이름 (ex: 'div', 'span')
  * @param {string} [text] - 요소에 설정할 텍스트 내용 (XSS 방지를 위해 textContent 사용)
  * @param {string} [className] - 요소에 적용할 CSS 클래스명
- * @param {string} [html] - 요소에 설정할 HTML 문자열 (주의: XSS 위험)
  * @param {Object.<string, string>} [attrs={}] - 추가로 설정할 속성 객체 (ex: { id: 'test', 'data-id': '123' })
  *
  * @returns {HTMLElement} 생성된 HTML 요소
  */
-export function createElement(tag, text, className, html, attrs = {}) {
+export function createElement(tag, text, className, attrs = {}) {
     const el = document.createElement(tag);
 
     if (className) {
         el.className = className;
     }
 
-    if (html) {
-        el.innerHTML = html
-    } else {
+    if (text) {
         el.textContent = text;
     }
 

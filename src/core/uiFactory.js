@@ -108,11 +108,33 @@ UI.initMatricCard = function ({id, title, data, footer, options = {}, custom = {
     return mc;
 }
 
+/**
+ * Node 컴포넌트를 생성하고 초기화한다.
+ *
+ * @function initNode
+ * @memberof UI
+ *
+ * @param {Object} [params={}] - 초기화 파라미터 객체
+ * @param {string} params.id - Node가 마운트될 DOM element의 ID
+ * @param {*} params.data - Node 초기 렌더링에 사용할 데이터
+ * @param {Object} [params.options={}] - Node 동작 옵션
+ * @param {Object} [params.custom={}] - 사용자 정의 설정값
+ *
+ * @returns {Node} 생성 및 초기화된 Node 인스턴스
+ *
+ * @example
+ * UI.initNode({
+ *   id: "node-container",
+ *   data: { title: "Server A" },
+ *   options: { clickable: true },
+ *   custom: { theme: "dark" }
+ * });
+ */
 UI.initNode = function ({id, data, options = {}, custom = {}} = {}) {
-    // MetricCard를 인스턴스 생성
+    // Node 인스턴스 생성
     const node = new Node({id, options, custom, iconEngine: UI.iconEngine});
 
-    // MetricCard를 Render
+    // Node Render
     node.init(data);
 
     return node;

@@ -152,14 +152,15 @@ class ListView {
      * @private
      */
     renderHeader() {
-        this.headerEl.innerHTML = "";
+        this.headerEl.textContent = "";
 
         if (this.custom.header) {
             utils.renderCustom(this.headerEl, this.custom.header, this.getContext());
             return;
         }
 
-        this.headerEl.innerHTML = `<h3>${this.title.value}</h3>`;
+        const title = utils.createElement("h3", this.title.value);
+        this.headerEl.appendChild(title);
     }
 
     /**
@@ -192,7 +193,7 @@ class ListView {
      * @private
      */
     renderBody() {
-        this.bodyEl.innerHTML = "";
+        this.bodyEl.textContent = "";
 
         if (this.custom.body) {
             utils.renderCustom(this.bodyEl, this.custom.body, this.getContext());
@@ -252,7 +253,7 @@ class ListView {
      * @private
      */
     renderFooter() {
-        this.footerEl.innerHTML = "";
+        this.footerEl.textContent = "";
 
         if (this.custom.footer) {
             utils.renderCustom(this.footerEl, this.custom.footer, this.getContext());

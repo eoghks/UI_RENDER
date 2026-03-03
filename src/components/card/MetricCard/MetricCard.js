@@ -150,7 +150,7 @@ class MetricCard {
      * Header 영역 렌더링
      */
     renderHeader() {
-        this.headerEl.innerHTML = "";
+        this.headerEl.textContent = "";
 
         if (this.custom.header) {
             utils.renderCustom(this.headerEl, this.custom.header, this.getContext());
@@ -164,7 +164,7 @@ class MetricCard {
 
         // title 추가
         const title = document.createElement("span");
-        title.innerHTML = this.title.value;
+        title.textContent = this.title.value;
 
         const elements = [title]; // 기본적으로 title만 있음
 
@@ -187,7 +187,7 @@ class MetricCard {
      * Body 영역 렌더링
      */
     renderBody() {
-        this.bodyEl.innerHTML = "";
+        this.bodyEl.textContent = "";
 
         if (this.custom.body) {
             utils.renderCustom(this.bodyEl, this.custom.body, this.getContext());
@@ -233,11 +233,11 @@ class MetricCard {
 
         const counter = document.createElement("span");
         counter.className = utils.makeClassName([], ["counter"]);
-        counter.innerHTML = d.value;
+        counter.textContent = d.value;
 
         const unit = document.createElement("span");
         unit.className = utils.makeClassName([], ["unit"]);
-        unit.innerHTML = d.unit;
+        unit.textContent = d.unit;
 
         main.append(counter, unit);
         return main;
@@ -286,7 +286,7 @@ class MetricCard {
      * Footer 영역 렌더링
      */
     renderFooter() {
-        this.footerEl.innerHTML = "";
+        this.footerEl.textContent = "";
 
         if (this.custom.footer) {
             utils.renderCustom(this.footerEl, this.custom.footer, this.getContext());
