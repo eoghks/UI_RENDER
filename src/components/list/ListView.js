@@ -77,21 +77,36 @@ class ListView {
             throw new Error(`No listView element with id ${this.id}`);
         }
 
-        this.clear();
         this.renderLayout();
         this.setData(data);
     }
 
     /**
-     * ListView 루트 요소의 모든 자식 DOM을 제거한다.
+     * 내부 내용을 초기화한다.
      *
-     * header, body, footer 영역도 함께 제거된다.
-     * 루트 요소(this.el) 자체는 유지된다.
+     * header, body, footer 영역의 자식 요소만 제거하며,
+     * 루트 요소(this.el)와 레이아웃 구조는 유지된다.
+     *
+     * 이후 setData() 호출 시 내부 콘텐츠만 다시 렌더링할 수 있도록
+     * 상태 데이터(data, viewData)도 함께 초기화한다.
+     *
+     * @returns {void}
      */
     clear() {
-        if (this.el) {
-            utils.clear(this.el);
+        if (this.headerEl) {
+            utils.clear(this.headerEl);
         }
+
+        if (this.bodyEl) {
+            utils.clear(this.bodyEl);
+        }
+
+        if (this.footerEl) {
+            utils.clear(this.footerEl);
+        }
+
+        this.data = null;
+        this.viewData = null;
     }
 
     /**
@@ -107,9 +122,9 @@ class ListView {
         this.bodyEl = document.createElement("div");
         this.footerEl = document.createElement("div");
 
-        this.headerEl.className = utils.makeClassName(["listView-header"]);
-        this.bodyEl.className = utils.makeClassName(["listView-body"]);
-        this.footerEl.className = utils.makeClassName(["listView-footer"]);
+        this.headerEl.className = utils.makeClassName(["listView-header", "header"]);
+        this.bodyEl.className = utils.makeClassName(["listView-body", "body"]);
+        this.footerEl.className = utils.makeClassName(["listView-footer", "footer"]);
 
         this.el.append(
             this.headerEl,
@@ -127,14 +142,6 @@ class ListView {
      * @private
      */
     draw() {
-        // 데이터 전처리
-        if (!this.schema) {
-            this.viewData = this.data.slice(0, this.options.size);
-        } else {
-            const mapper = utils.createMapper(this.schema);
-            this.viewData = this.data.slice(0, this.options.size).map(mapper);
-        }
-
         this.renderHeader();
         this.renderBody();
         this.renderFooter();
@@ -159,8 +166,10 @@ class ListView {
             return;
         }
 
-        const title = utils.createElement("h3", this.title.value);
-        this.headerEl.appendChild(title);
+        if (this.title  && Object.keys(this.title).length > 0) {
+            const title = utils.createElement("h3", this.title.value);
+            this.headerEl.appendChild(title);
+        }
     }
 
     /**
@@ -169,7 +178,15 @@ class ListView {
      * @param {Object[]} data 렌더링할 데이터 배열
      */
     setData(data = []) {
+        this.clear();
         this.data = data;
+        // 데이터 전처리
+        if (!this.schema) {
+            this.viewData = this.data.slice(0, this.options.size);
+        } else {
+            const mapper = utils.createMapper(this.schema);
+            this.viewData = this.data.slice(0, this.options.size).map(mapper);
+        }
         this.draw();
     }
 

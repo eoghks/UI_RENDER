@@ -91,6 +91,7 @@
 }
 
 .delta {
+    padding: 0.25rem 0.5rem;
     font-size: 1.0rem;
     font-weight: 600;
 }

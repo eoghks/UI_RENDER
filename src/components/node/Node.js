@@ -60,21 +60,31 @@ class Node {
     init(data) {
         this.el = document.getElementById(this.id);
         if (!this.el) {
-            throw new Error(`No systemNode element with id ${this.id}`);
+            throw new Error(`No node element with id ${this.id}`);
         }
 
-        this.clear();
         this.renderLayout();
         this.setData(data);
     }
 
     /**
-     * body 렌더링 및 이벤트 바인딩 수행
+     * 내부 내용을 초기화한다.
+     *
+     *  body  영역의 자식 요소만 제거하며,
+     * 루트 요소(this.el)와 레이아웃 구조는 유지된다.
+     *
+     * 이후 setData() 호출 시 내부 콘텐츠만 다시 렌더링할 수 있도록
+     * 상태 데이터(data, viewData)도 함께 초기화한다.
+     *
+     * @returns {void}
      */
     clear() {
-        if (this.el) {
-            utils.clear(this.el);
+        if (this.bodyEl) {
+            utils.clear(this.bodyEl);
         }
+
+        this.data = null;
+        this.viewData = null;
     }
 
     /**
@@ -83,7 +93,7 @@ class Node {
      * @private
      */
     renderLayout() {
-        const className = utils.makeClassName(["node"]);
+        const className = utils.makeClassName(["node", "body"]);
         this.bodyEl = utils.createElement("div", "", className);
 
         this.el.appendChild(this.bodyEl);
@@ -103,7 +113,8 @@ class Node {
      * 데이터를 설정하고 다시 렌더링
      * @param {Array<Object>} data
      */
-    setData(data = []) {
+     setData(data = []) {
+        this.clear();
         this.data = data;
         this.viewData = data;
         this.draw();
@@ -121,6 +132,8 @@ class Node {
      * custom.body가 존재하면 해당 렌더러를 사용
      */
     renderBody() {
+        this.bodyEl.textContent = "";
+
         if (this.custom.body) {
             utils.renderCustom(this.bodyEl, this.custom.body, this.getContext());
             return;

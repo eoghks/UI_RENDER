@@ -84,18 +84,36 @@ class MetricCard {
             throw new Error(`No metricCard element with id ${this.id}`);
         }
 
-        this.clear();
         this.renderLayout();
         this.setData(data);
     }
 
     /**
-     * 카드 내부 초기화
+     * 내부 내용을 초기화한다.
+     *
+     * header, body, footer 영역의 자식 요소만 제거하며,
+     * 루트 요소(this.el)와 레이아웃 구조는 유지된다.
+     *
+     * 이후 setData() 호출 시 내부 콘텐츠만 다시 렌더링할 수 있도록
+     * 상태 데이터(data, viewData)도 함께 초기화한다.
+     *
+     * @returns {void}
      */
     clear() {
-        if (this.el) {
-            utils.clear(this.el);
+        if (this.headerEl) {
+            utils.clear(this.headerEl);
         }
+
+        if (this.bodyEl) {
+            utils.clear(this.bodyEl);
+        }
+
+        if (this.footerEl) {
+            utils.clear(this.footerEl);
+        }
+
+        this.data = null;
+        this.viewData = null;
     }
 
     /**
@@ -106,9 +124,9 @@ class MetricCard {
         this.bodyEl = document.createElement("div");
         this.footerEl = document.createElement("div");
 
-        this.headerEl.className = utils.makeClassName(["metricCard-header"]);
-        this.bodyEl.className = utils.makeClassName(["metricCard-body"]);
-        this.footerEl.className = utils.makeClassName(["metricCard-footer"]);
+        this.headerEl.className = utils.makeClassName(["metricCard-header", "header"]);
+        this.bodyEl.className = utils.makeClassName(["metricCard-body", "body"]);
+        this.footerEl.className = utils.makeClassName(["metricCard-footer", "footer"]);
 
         this.el.append(
             this.headerEl,
@@ -134,6 +152,7 @@ class MetricCard {
      * @param {MetricCardData} data
      */
     setData(data = {}) {
+        this.clear();
         this.data = data;
         this.viewData = [data];
         this.draw();
@@ -157,30 +176,32 @@ class MetricCard {
             return;
         }
 
-        // heaeder 카드색 class 추가
-        if (this.title.backgroundColor) {
-            this.headerEl.classList.add(this.title.backgroundColor);
-        }
-
-        // title 추가
-        const title = document.createElement("span");
-        title.textContent = this.title.value;
-
-        const elements = [title]; // 기본적으로 title만 있음
-
-        // Icon 추가
-        if (this.title.icon) {
-            const icon = this.iconEngine.getIcon(this.title.icon);
-            // iconPosition에 따라 순서 조정
-            if (this.title.iconPosition === "left") {
-                elements.unshift(icon); // 앞에 넣기
-            } else {
-                elements.push(icon);    // 뒤에 넣기 (기본)
+        if (this.title  && Object.keys(this.title).length > 0) {
+            // heaeder 카드색 class 추가
+            if (this.title.backgroundColor) {
+                this.headerEl.classList.add(this.title.backgroundColor);
             }
-        }
 
-        // 한 번에 append
-        elements.forEach(el => this.headerEl.appendChild(el));
+            // title 추가
+            const title = document.createElement("span");
+            title.textContent = this.title.value;
+
+            const elements = [title]; // 기본적으로 title만 있음
+
+            // Icon 추가
+            if (this.title.icon) {
+                const icon = this.iconEngine.getIcon(this.title.icon);
+                // iconPosition에 따라 순서 조정
+                if (this.title.iconPosition === "left") {
+                    elements.unshift(icon); // 앞에 넣기
+                } else {
+                    elements.push(icon);    // 뒤에 넣기 (기본)
+                }
+            }
+
+            // 한 번에 append
+            elements.forEach(el => this.headerEl.appendChild(el));
+        }
     }
 
     /**
@@ -197,7 +218,7 @@ class MetricCard {
         const wrapper = this.createBodyWrapper();
 
         if (Array.isArray(this.viewData) && this.viewData.length > 0) {
-            wrapper.classList.add(utils.makeClassName([],[utils.RULES.dataBindClass]));
+            wrapper.classList.add(utils.makeClassName([], [utils.RULES.dataBindClass]));
             wrapper.dataset.index = "0";
             wrapper["_uiIndex"] = 0;// 이벤트 성능 용
             wrapper.appendChild(this.createMainSection());
@@ -348,6 +369,7 @@ class MetricCard {
             id: this.id,
             el: this.el,
             title: this.title,
+            footer: this.footer,
             rawData: this.data,
             viewDat: this.viewData,
             options: this.options,

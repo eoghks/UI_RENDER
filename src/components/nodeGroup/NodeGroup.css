@@ -1,0 +1,10 @@
+.dh-nodes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+/* Body */
+.dh-nodeGroup-body {
+    padding: 1rem;
+    flex: 1;
+}

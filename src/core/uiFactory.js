@@ -1,5 +1,5 @@
 import * as utils from "../utils/utils.js";
-import {ListView, MetricCard, Node} from "../index.js";
+import {ListView, MetricCard, Node, NodeGroup} from "../index.js";
 import {createLucideEngine} from "../plugins/lucide/lucideEngine.js";
 
 /**
@@ -138,6 +138,34 @@ UI.initNode = function ({id, data, options = {}, custom = {}} = {}) {
     node.init(data);
 
     return node;
+}
+
+/**
+ * UI에 NodeGroup을 생성하고 초기화합니다.
+ *
+ * @param {Object} params - 함수 파라미터 객체
+ * @param {string} params.id - NodeGroup의 고유 ID
+ * @param {string|Object} [params.title] - NodeGroup의 제목 (문자열 또는 객체)
+ * @param {Array<Object>} params.data - NodeGroup에 렌더링할 노드 데이터 배열
+ * @param {Object} [params.options={}] - NodeGroup 생성 옵션
+ * @param {Object} [params.custom={}] - 사용자 정의 데이터
+ * @returns {NodeGroup} 생성된 NodeGroup 인스턴스
+ *
+ * @example
+ * const data = [
+ *   { type: 'tag', value: 'MASTER' },
+ *   { type: 'details', detailData: [{ label: 'IP', value: '10.0.0.1' }] }
+ * ];
+ * const ng = UI.initNodeGroup({ id: 'panel1', title: '서버 목록', data });
+ */
+UI.initNodeGroup = function ({id, title, data, options = {}, custom = {}} = {}) {
+    // NodeGroup 인스턴스 생성
+    const ng = new NodeGroup({id, title, options, custom, iconEngine: UI.iconEngine});
+
+    // NodeGroup Render
+    ng.init(data);
+
+    return ng;
 }
 
 export default UI;

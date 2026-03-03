@@ -1,22 +1,6 @@
 
 /* listView */
 
-.dh-listView-header {
-    background: #f8f9fa;
-    padding: 0.8rem 1.2rem;
-    border-bottom: 1px solid #e1e4e8;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dh-listView-header h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #333333;
-    margin: 0;
-}
-
 .dh-listView-body {
     padding: 1rem;
     flex: 1;
