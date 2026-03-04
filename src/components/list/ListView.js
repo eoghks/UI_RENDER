@@ -241,32 +241,37 @@ class ListView {
         if (this.viewData?.length) {
             this.viewData.forEach((item, index) => {
                 const li = document.createElement("li");
-                li.className = utils.makeClassName(["listView-item"], [utils.RULES.dataBindClass]);
                 li.dataset.index = index.toString();
                 li["_uiIndex"] = index;// 이벤트 성능 용
 
-                /* html 속성에 data 저장 기능(필요하면 추가)
-                Object.entries(item).forEach(([key, value]) => {
-                    // HTML 속성으로 안전하게 변환 (특수문자 등)
-                    const safeKey = key.replace(/[^a-zA-Z0-9\-_]/g, "_");
-                    li.dataset[safeKey] = value;
-                }); */
+                if (item.error) {
+                    li.textContent = item.error;
+                    li.className = utils.makeClassName(["listView-item","error"], []);
+                } else {
+                    li.className = utils.makeClassName(["listView-item"], [utils.RULES.dataBindClass]);
+                    /* html 속성에 data 저장 기능(필요하면 추가)
+                    Object.entries(item).forEach(([key, value]) => {
+                        // HTML 속성으로 안전하게 변환 (특수문자 등)
+                        const safeKey = key.replace(/[^a-zA-Z0-9\-_]/g, "_");
+                        li.dataset[safeKey] = value;
+                    }); */
+                    if (item.icon) {
+                        const iconEl = this.renderIcon(item.icon);
+                        if (iconEl) {
+                            li.appendChild(iconEl);
+                        }
+                    }
+                    if (item.title) {
+                        li.appendChild(this.renderContent(item));
+                    }
+                    if (item.rightType) {
+                        const right = this.renderRightComponent(item);
+                        if (right) {
+                            li.appendChild(right);
+                        }
+                    }
+                }
 
-                if (item.icon) {
-                    const iconEl = this.renderIcon(item.icon);
-                    if (iconEl) {
-                        li.appendChild(iconEl);
-                    }
-                }
-                if (item.title) {
-                    li.appendChild(this.renderContent(item));
-                }
-                if (item.rightType) {
-                    const right = this.renderRightComponent(item);
-                    if (right) {
-                        li.appendChild(right);
-                    }
-                }
 
                 ul.appendChild(li);
             });
