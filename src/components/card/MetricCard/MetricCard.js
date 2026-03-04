@@ -272,15 +272,20 @@ class MetricCard {
         const main = document.createElement("div");
         main.className = utils.makeClassName([], ["counter-group"]);
 
-        const counter = document.createElement("span");
-        counter.className = utils.makeClassName([], ["counter"]);
-        counter.textContent = d.value;
+        if (d.error) {
+            const error = utils.createElement("span", d.error, utils.makeClassName(["error"], []));
+            main.appendChild(error);
+        } else {
+            const counter = document.createElement("span");
+            counter.className = utils.makeClassName([], ["counter"]);
+            counter.textContent = d.value;
 
-        const unit = document.createElement("span");
-        unit.className = utils.makeClassName([], ["unit"]);
-        unit.textContent = d.unit;
+            const unit = document.createElement("span");
+            unit.className = utils.makeClassName([], ["unit"]);
+            unit.textContent = d.unit;
 
-        main.append(counter, unit);
+            main.append(counter, unit);
+        }
         return main;
     }
 
