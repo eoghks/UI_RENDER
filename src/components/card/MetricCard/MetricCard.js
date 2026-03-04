@@ -52,7 +52,7 @@ class MetricCard {
      * @param {Object} [params.custom] - header/body/footer 커스텀 렌더링 설정
      * @param {Object} [params.iconEngine] - 아이콘 렌더링 엔진
      */
-    constructor({id, title = {}, footer = {}, options: userOptions = {}, custom = {}, iconEngine = null} = {}) {
+    constructor({id, title = {}, footer = {}, schema, options: userOptions = {}, custom = {}, iconEngine = null} = {}) {
         const defaultOption = {
             emptyText: "데이터 없음",
             events: [],
@@ -61,6 +61,7 @@ class MetricCard {
         this.id = id;
         this.title = title;
         this.footer = footer;
+        this.schema = schema;
         this.custom = custom;
         this.options = utils.deepMerge(defaultOption, userOptions);
         this.iconEngine = iconEngine;
@@ -78,14 +79,18 @@ class MetricCard {
      * 컴포넌트 초기화
      * @param {MetricCardData} data - 초기 데이터
      */
-    init(data) {
+    init(data = {}) {
         this.el = document.getElementById(this.id);
         if (!this.el) {
             throw new Error(`No metricCard element with id ${this.id}`);
         }
 
         this.renderLayout();
-        this.setData(data);
+
+        this.data = data;
+        this.setViewData();
+
+        this.draw();
     }
 
     /**
@@ -111,9 +116,12 @@ class MetricCard {
         if (this.footerEl) {
             utils.clear(this.footerEl);
         }
+    }
 
-        this.data = null;
-        this.viewData = null;
+    reset() {
+        this.clear()
+        this.data = {};
+        this.viewData = [];
     }
 
     /**
@@ -143,8 +151,8 @@ class MetricCard {
         this.renderBody();
         this.renderFooter();
 
-        this.afterDraw();
         utils.bindEvents(this.el, this.options.events, this.viewData);
+        this.afterDraw();
     }
 
     /**
@@ -152,10 +160,22 @@ class MetricCard {
      * @param {MetricCardData} data
      */
     setData(data = {}) {
-        this.clear();
         this.data = data;
-        this.viewData = [data];
-        this.draw();
+        this.setViewData();
+
+        this.renderBody();
+
+        utils.bindEvents(this.el, this.options.events, this.viewData);
+        this.afterDraw();
+    }
+
+    setViewData() {
+        this.viewData = [this.data];
+
+        if (this.schema) {
+            const mapper = utils.createMapper(this.schema);
+            this.viewData = this.viewData.map(mapper);
+        }
     }
 
     /**
@@ -176,7 +196,7 @@ class MetricCard {
             return;
         }
 
-        if (this.title  && Object.keys(this.title).length > 0) {
+        if (this.title && Object.keys(this.title).length > 0) {
             // heaeder 카드색 class 추가
             if (this.title.backgroundColor) {
                 this.headerEl.classList.add(this.title.backgroundColor);
@@ -348,16 +368,22 @@ class MetricCard {
      * 컴포넌트 제거 및 이벤트 해제
      */
     destroy() {
-        if (this.el) {
-            utils.unbindEvents(this.el);
-            utils.clear(this.el);
+        if (!this.el) {
+            return;
         }
+
+        uiUtils.unbindEvents(this.el);
+
+        // Dom에서 제거
+        this.el.remove();
 
         this.el = null;
         this.headerEl = null;
         this.bodyEl = null;
         this.footerEl = null;
-        this.data = [];
+
+        this.data = null;
+        this.viewData = null;
     }
 
     /**
@@ -371,7 +397,8 @@ class MetricCard {
             title: this.title,
             footer: this.footer,
             rawData: this.data,
-            viewDat: this.viewData,
+            viewData: this.viewData,
+            schema: this.schema,
             options: this.options,
             ui: this
         };

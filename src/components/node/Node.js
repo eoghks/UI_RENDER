@@ -64,7 +64,11 @@ class Node {
         }
 
         this.renderLayout();
-        this.setData(data);
+
+        this.data = data;
+        this.setViewData();
+
+        this.draw();
     }
 
     /**
@@ -82,9 +86,12 @@ class Node {
         if (this.bodyEl) {
             utils.clear(this.bodyEl);
         }
+    }
 
-        this.data = null;
-        this.viewData = null;
+    reset() {
+        this.clear()
+        this.data = [];
+        this.viewData = [];
     }
 
     /**
@@ -105,25 +112,32 @@ class Node {
     draw() {
         this.renderBody();
 
+        utils.bindEvents(this.el, this.options.events, this.viewData);
         this.afterDraw();
-        utils.bindEvents(this.el, this.options.events, this.viewdata);
     }
 
     /**
      * 데이터를 설정하고 다시 렌더링
      * @param {Array<Object>} data
      */
-     setData(data = []) {
-        this.clear();
+    setData(data = []) {
         this.data = data;
-        this.viewData = data;
+        this.setViewData();
+
         this.draw();
+    }
+
+    setViewData() {
+        this.viewData = this.data;
     }
 
     /**
      * 현재 데이터를 기준으로 다시 렌더링
      */
     redraw() {
+        if (!this.el) {
+            return;
+        }
         this.draw();
     }
 
@@ -325,14 +339,17 @@ class Node {
      * DOM 및 이벤트 정리
      */
     destroy() {
-        if (this.el) {
-            utils.unbindEvents(this.el);
-            utils.clear(this.el);
+               if (!this.el) {
+            return;
         }
 
+        utils.unbindEvents(this.el);
+
         this.el = null;
-        this.nodeEl = null;
-        this.data = [];
+        this.bodyEl = null;
+
+        this.data = null;
+        this.viewData = null;
     }
 
     /**

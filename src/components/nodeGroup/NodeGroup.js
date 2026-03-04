@@ -48,7 +48,11 @@ class NodeGroup {
         }
 
         this.renderLayout();
-        this.setData(data);
+
+        this.data = data;
+        this.setViewData();
+
+        this.draw();
     }
 
     /**
@@ -70,9 +74,12 @@ class NodeGroup {
         if (this.bodyEl) {
             utils.clear(this.bodyEl);
         }
+    }
 
-        this.data = null;
-        this.viewData = null;
+    reset() {
+        this.clear()
+        this.data = [];
+        this.viewData = [];
     }
 
     /**
@@ -100,8 +107,8 @@ class NodeGroup {
         this.renderHeader();
         this.renderBody();
 
+        utils.bindEvents(this.el, this.options.events, this.viewData);
         this.afterDraw();
-        utils.bindEvents(this.el, this.options.events, this.viewdata);
     }
 
     /**
@@ -111,8 +118,20 @@ class NodeGroup {
     setData(data = []) {
         this.clear();
         this.data = data;
-        this.viewData = data;
-        this.draw();
+        // 데이터 전처리
+        this.setViewData();
+
+        this.renderBody();
+
+        uiUtils.bindEvents(this.el, this.options.events, this.viewData);
+        this.afterDraw();
+    }
+
+    setViewData() {
+        if (!this.el) {
+            return;
+        }
+        this.viewData = this.data;
     }
 
     /**
@@ -215,8 +234,10 @@ class NodeGroup {
         }
 
         this.el = null;
-        this.nodeEl = null;
-        this.data = [];
+        this.headerEl = null;
+        this.bodyEl = null;
+        this.data = null;
+        this.viewData = null;
     }
 
     /**

@@ -78,7 +78,11 @@ class ListView {
         }
 
         this.renderLayout();
-        this.setData(data);
+
+        this.data = data;
+        this.setViewData();
+
+        this.draw();
     }
 
     /**
@@ -104,10 +108,14 @@ class ListView {
         if (this.footerEl) {
             utils.clear(this.footerEl);
         }
-
-        this.data = null;
-        this.viewData = null;
     }
+
+    reset() {
+        this.clear()
+        this.data = [];
+        this.viewData = [];
+    }
+
 
     /**
      * ListView의 기본 레이아웃 구조를 생성한다.
@@ -146,8 +154,8 @@ class ListView {
         this.renderBody();
         this.renderFooter();
 
-        this.afterDraw();
         utils.bindEvents(this.el, this.options.events, this.viewData);
+        this.afterDraw();
     }
 
     /**
@@ -179,15 +187,22 @@ class ListView {
      */
     setData(data = []) {
         this.clear();
-        this.data = data;
         // 데이터 전처리
+        this.setViewData();
+
+        this.renderBody();
+
+        utils.bindEvents(this.el, this.options.events, this.viewData);
+        this.afterDraw();
+    }
+
+    setViewData() {
         if (!this.schema) {
             this.viewData = this.data.slice(0, this.options.size);
         } else {
             const mapper = utils.createMapper(this.schema);
             this.viewData = this.data.slice(0, this.options.size).map(mapper);
         }
-        this.draw();
     }
 
     /**
@@ -196,6 +211,9 @@ class ListView {
      * 데이터 변경 없이 UI만 갱신할 때 사용한다.
      */
     redraw() {
+        if (!this.el) {
+            return;
+        }
         this.draw();
     }
 
@@ -312,17 +330,23 @@ class ListView {
      * 이벤트 및 DOM 참조를 해제한다.
      */
     destroy() {
-        if (this.el) {
-            utils.unbindEvents(this.el);
-            utils.clear(this.el);
+        if (!this.el) {
+            return;
         }
 
+        utils.unbindEvents(this.el);
+
+        // Dom에서 제거
+        this.el.remove();
+
+        // 내부 참조 제거
         this.el = null;
         this.headerEl = null;
         this.bodyEl = null;
         this.footerEl = null;
-        this.data = [];
-        this.viewData = [];
+
+        this.data = null;
+        this.viewData = null;
     }
 
     /**
