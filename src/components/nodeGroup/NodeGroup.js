@@ -173,7 +173,7 @@ class NodeGroup {
         if (this.viewData?.length) {
             this.viewData.forEach((d, index) => {
                 const nodeId = `${this.id}-node-${index}`;
-                const className = utils.makeClassName(["nodeGroup-node"]);
+                const className = utils.makeClassName(["nodeGroup-node"],[utils.RULES.dataBindClass]);
                 const nodeEl = utils.createElement("div", undefined, className);
 
                 nodeEl.id = nodeId;
