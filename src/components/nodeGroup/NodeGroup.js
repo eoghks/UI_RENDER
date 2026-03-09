@@ -121,6 +121,10 @@ class NodeGroup {
         // 데이터 전처리
         this.setViewData();
 
+        if (this.bodyEl) {
+            utils.clear(this.bodyEl);
+        }
+
         this.renderBody();
 
         uiUtils.bindEvents(this.el, this.options.events, this.viewData);

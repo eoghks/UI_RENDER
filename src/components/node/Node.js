@@ -253,6 +253,11 @@ class Node {
         detailItemEl._uiIndex = index;          // 기존 패턴 유지용
 
         Object.entries(data).forEach(([key, value]) => {
+            // meta data는 바인딩하지 않음
+            if(key === 'meta') {
+                return;
+            }
+            
             const span = utils.createElement(
                 "span",
                 value,

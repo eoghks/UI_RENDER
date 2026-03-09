@@ -76,11 +76,11 @@
 
 .status-badge.critical {
     background: #fff1e6; /* 연한 주황 */
-    color: #c24e00;      /* 진한 주황 */
+    color: #c24e00; /* 진한 주황 */
 }
 
-.dh-event-active{
-    outline: 1px solid #4dabf7 ;
+.dh-event-active {
+    outline: 1px solid #4dabf7;
     background-color: rgba(77, 171, 247, 0.1);
     cursor: pointer;
     border-radius: 3px;
@@ -88,7 +88,8 @@
 }
 
 .status-badge.running,
-.status-badge.standby {
+.status-badge.standby,
+.status-badge.stop {
     padding: 0.3rem 0.6rem;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -100,7 +101,8 @@
 
 
 .status-badge.running::before,
-.status-badge.standby::before {
+.status-badge.standby::before,
+.status-badge.stop::before {
     content: '';
     width: 6px;
     height: 6px;
@@ -127,6 +129,15 @@
 
 .status-badge.standby::before {
     background: #b78103;
+}
+
+.status-badge.stop {
+    background: #ffeaea;
+    color: #d73a49;
+}
+
+.status-badge.stop::before {
+    background: #d73a49;
 }
 
 /* Tag */
