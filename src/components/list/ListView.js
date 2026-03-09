@@ -46,7 +46,8 @@ class ListView {
         const defaultOption = {
             size: 5,
             events: [],
-            emptyText: "데이터 없음"
+            emptyText: "데이터 없음",
+            errorMsg: "처리중 오류가 발생했습니다.",
         }
 
         this.id = id;
@@ -245,7 +246,7 @@ class ListView {
                 li["_uiIndex"] = index;// 이벤트 성능 용
 
                 if (item.error) {
-                    li.textContent = item.error;
+                    li.textContent = item.error || this.options.errorMsg;
                     li.className = utils.makeClassName(["listView-item","error"], []);
                 } else {
                     li.className = utils.makeClassName(["listView-item"], [utils.RULES.dataBindClass]);

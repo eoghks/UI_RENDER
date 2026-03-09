@@ -56,6 +56,7 @@ class MetricCard {
         const defaultOption = {
             emptyText: "데이터 없음",
             events: [],
+            errorMsg: "처리중 오류가 발생했습니다.",
         }
 
         this.id = id;
@@ -273,7 +274,7 @@ class MetricCard {
         main.className = utils.makeClassName([], ["counter-group"]);
 
         if (d.error) {
-            const error = utils.createElement("span", d.error, utils.makeClassName(["error"], []));
+            const error = utils.createElement("span", d.error || this.options.errorMsg, utils.makeClassName(["error"], []));
             main.appendChild(error);
         } else {
             const counter = document.createElement("span");

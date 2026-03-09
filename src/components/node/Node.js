@@ -39,6 +39,7 @@ class Node {
         const defaultOption = {
             emptyText: "데이터 없음",
             events: [],
+            errorMsg: "처리중 오류가 발생했습니다.",
         }
 
         this.id = id;
@@ -155,7 +156,9 @@ class Node {
 
         const wrapper = this.createBodyWrapper();
 
-        if (Array.isArray(this.viewData) && this.viewData.length > 0) {
+        if('error' in this.viewData) {
+            this.renderError(wrapper);
+        } else if (Array.isArray(this.viewData) && this.viewData.length > 0) {
             wrapper.classList.add(utils.makeClassName([], [utils.RULES.dataBindClass]));
             wrapper.dataset.index = "0";
             wrapper["_uiIndex"] = 0;// 이벤트 성능 용
@@ -180,6 +183,15 @@ class Node {
         }
 
         this.bodyEl.appendChild(wrapper);
+    }
+
+    /**
+     * error 상태 렌더링
+     * @param {HTMLElement} wrapper
+     */
+    renderError(wrapper) {
+        wrapper.classList.add(uiUtils.makeClassName(["error"]));
+        wrapper.textContent = this.viewData.error || this.options.errorMsg;
     }
 
     /**
