@@ -353,7 +353,7 @@ export function bindEvents(el, events = [], viewData = []) {
                 selectorMap.set(ev.selector, list);
 
                 // 실제 DOM에 표시용 클래스 추가
-                if (!ev.useEventClass) {
+                if (ev.useEventClass === false) {
                     return;
                 }
 
