@@ -179,6 +179,14 @@ class MetricCard {
         }
     }
 
+    getData() {
+        return this.data;
+    }
+
+    getViewData() {
+        return this.viewData
+    }
+
     /**
      * 현재 데이터로 다시 렌더링
      */

@@ -206,6 +206,14 @@ class ListView {
         }
     }
 
+    getData() {
+        return this.data;
+    }
+
+    getViewData() {
+        return this.viewData
+    }
+
     /**
      * 현재 데이터를 기준으로 ListView를 다시 렌더링한다.
      *

@@ -57,7 +57,13 @@ UI.initListView = function ({id, title, data, schema, options = {}, custom = {}}
     // ListView Render
     lv.init(data);
 
-    return lv;
+    return {
+        getData: () => lv.getData(),
+        setData: (data) => lv.setData(data),
+        getViewData: () => lv.getViewData(),
+        redraw: () => lv.redraw(),
+        destroy: () => lv.destroy(),
+    };
 }
 
 /**
@@ -105,7 +111,13 @@ UI.initMatricCard = function ({id, title, data, footer, options = {}, custom = {
     // MetricCard를 Render
     mc.init(data);
 
-    return mc;
+    return {
+        getData: () => mc.getData(),
+        setData: (data) => mc.setData(data),
+        getViewData: () => mc.getViewData(),
+        redraw: () => mc.redraw(),
+        destroy: () => mc.destroy(),
+    };
 }
 
 /**
@@ -137,7 +149,13 @@ UI.initNode = function ({id, data, options = {}, custom = {}} = {}) {
     // Node Render
     node.init(data);
 
-    return node;
+    return {
+        getData: () => node.getData(),
+        setData: (data) => node.setData(data),
+        getViewData: () => node.getViewData(),
+        redraw: () => node.redraw(),
+        destroy: () => node.destroy(),
+    };
 }
 
 /**
@@ -165,7 +183,13 @@ UI.initNodeGroup = function ({id, title, data, options = {}, custom = {}} = {}) 
     // NodeGroup Render
     ng.init(data);
 
-    return ng;
+    return {
+        getData: () => ng.getData(),
+        setData: (data) => ng.setData(data),
+        getViewData: () => ng.getViewData(),
+        redraw: () => ng.redraw(),
+        destroy: () => ng.destroy(),
+    };
 }
 
 export default UI;

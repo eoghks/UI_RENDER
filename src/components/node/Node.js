@@ -132,6 +132,14 @@ class Node {
         this.viewData = this.data;
     }
 
+    getData() {
+        return this.data;
+    }
+
+    getViewData() {
+        return this.viewData
+    }
+
     /**
      * 현재 데이터를 기준으로 다시 렌더링
      */
