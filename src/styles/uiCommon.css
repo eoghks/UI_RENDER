@@ -89,7 +89,9 @@
 
 .status-badge.running,
 .status-badge.standby,
-.status-badge.stop {
+.status-badge.stop,
+.status-badge.abnormal,
+.status-badge.unknown  {
     padding: 0.3rem 0.6rem;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -102,7 +104,9 @@
 
 .status-badge.running::before,
 .status-badge.standby::before,
-.status-badge.stop::before {
+.status-badge.stop::before,
+.status-badge.abnormal::before,
+.status-badge.unknown::before  {
     content: '';
     width: 6px;
     height: 6px;
@@ -138,6 +142,24 @@
 
 .status-badge.stop::before {
     background: #d73a49;
+}
+
+/* Abnormal 상태 */
+.status-badge.abnormal {
+    background: #fff0f5; /* 연한 핑크 계열 */
+    color: #c71585; /* Abnormal 전용 색상 변수 */
+}
+.status-badge.abnormal::before {
+    background: #c71585;
+}
+
+/* Unknown 상태 */
+.status-badge.unknown {
+    background: #f0f0f0; /* 회색 계열 */
+    color: #6c757d; /* Unknown 전용 색상 변수 */
+}
+.status-badge.unknown::before {
+    background: #6c757d;
 }
 
 /* Tag */
