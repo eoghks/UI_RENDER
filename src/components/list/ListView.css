@@ -37,6 +37,14 @@
     color: #004b8d;
 }
 
+.rt-listView-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid #eff2f5;
+}
+
 .dh-listView-item-title {
     display: block;
     font-weight: 600;
